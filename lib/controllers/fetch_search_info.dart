@@ -16,7 +16,6 @@ class FetchSearchInfo{
           // Parse the list of mosques
           List<dynamic> mosqueList = data['mosques'];
           mosques = mosqueList.map((mosqueData) {
-            print(mosqueList);
             return SearchedMosque.fromJson(mosqueData);
           }).toList();
         } else {

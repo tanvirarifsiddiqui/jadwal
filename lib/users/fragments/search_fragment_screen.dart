@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/controllers/fetch_search_info.dart';
 import 'package:jadwal/mosques/model/search_mosque_model.dart';
 
@@ -11,15 +12,19 @@ class SearchFragmentScreen extends StatefulWidget {
 class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
   List<SearchedMosque> _mosques = []; //List to Store Mosques
   List<SearchedMosque> _foundedMosques = [];
+  int count = 0;
   @override
   void initState() {
     super.initState();
     //fetching default profile image
     if (_mosques.isEmpty) {
+      count++;
+      print(count);
       //fetching country list
       FetchSearchInfo.fetchMosques().then((mosqueList) {
         setState(() {
           _mosques = mosqueList;
+          _foundedMosques = _mosques;
         });
       }).catchError(
           (error) {}); // Call this to fetch and populate the list of countries.
@@ -53,7 +58,7 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.brown.shade800,
-        title: Container(
+        title: SizedBox(
           height: 38,
           child: TextField(
             style: TextStyle(color: Colors.brown[200]),
@@ -77,7 +82,7 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
       ),
       body: Container(
         color: Colors.grey.shade900,
-        child: _foundedMosques.length > 0 ? ListView.builder(
+        child: _foundedMosques.isNotEmpty ? ListView.builder(
             itemCount: _foundedMosques.length,
             itemBuilder: (context, index) {
               return Slidable(
@@ -128,22 +133,25 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
         children: [
           Row(
               children: [
-                Container(
+                SizedBox(
                     width: 60,
                     height: 60,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(50),
-                      child: Image.network(mosque.mosque_image),
+                      child: Image.network(API.mosqueImage+mosque.mosque_image),
                     )
                 ),
                 const SizedBox(width: 10),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(mosque.mosque_name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
-                      const SizedBox(height: 5,),
-                      Text(mosque.mosque_address, style: TextStyle(color: Colors.grey[500])),
-                    ]
+                SizedBox(
+                  width: MediaQuery.of(context).size.width*0.4,//solved by media query
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(mosque.mosque_name,softWrap: true, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                        const SizedBox(height: 5,),
+                        Text(mosque.mosque_address, softWrap: true, style: TextStyle(color: Colors.grey[500])),
+                      ]
+                  ),
                 )
               ]
           ),
@@ -155,16 +163,16 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
             },
             child: AnimatedContainer(
                 height: 35,
-                width: 110,
+                width: 100,
                 duration: const Duration(milliseconds: 300),
-                // decoration: BoxDecoration(
-                //     color: user.isFollowedByMe ? Colors.blue[700] : Color(0xffffff),
-                //     borderRadius: BorderRadius.circular(5),
-                //     border: Border.all(color: user.isFollowedByMe ? Colors.transparent : Colors.grey.shade700,)
-                // ),todo
-                // child: Center(
-                //     child: Text(user.isFollowedByMe ? 'Unfollow' : 'Follow', style: TextStyle(color: user.isFollowedByMe ? Colors.white : Colors.white))
-                // )
+                decoration: BoxDecoration(
+                    color: mosque.isConnectedByUser ? Colors.blue[700] : Color(0xffffff),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: mosque.isConnectedByUser ? Colors.transparent : Colors.grey.shade700,)
+                ),
+                child: Center(
+                    child: Text(mosque.isConnectedByUser ? 'Disconnect' : 'Connect', style: TextStyle(color: mosque.isConnectedByUser ? Colors.white : Colors.white))
+                )
             ),
           )
         ],
