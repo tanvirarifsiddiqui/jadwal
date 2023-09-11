@@ -3,7 +3,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/controllers/fetch_search_info.dart';
 import 'package:jadwal/mosques/model/search_mosque_model.dart';
-
+import 'package:get/get.dart';
+import 'package:jadwal/mosques/profile/user_mosque_profile.dart';
 class SearchFragmentScreen extends StatefulWidget {
   @override
   State<SearchFragmentScreen> createState() => _SearchFragmentScreenState();
@@ -132,39 +133,45 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-              children: [
-                SizedBox(
-                    width: 60,
-                    height: 60,
-                    child: ClipOval(
+          InkWell(
+            onTap: (){
+              // Get.to(MosqueProfileUser(mosqueId: mosque.mosque_id));
+              Get.to(() => UserMosqueProfile(mosqueId: mosque.mosque_id, isConnectedByUser: mosque.isConnectedByUser));
+            },
+            child: Row(
+                children: [
+                  SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: ClipOval(
 
-                      child: Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(API.mosqueImage+mosque.mosque_image),
-                          )
-                        ),
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(API.mosqueImage+mosque.mosque_image),
+                            )
+                          ),
+                        )
                       )
-                    )
-                ),
-                const SizedBox(width: 10),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width*0.4,//solved by media query
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(mosque.mosque_name,softWrap: true, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
-                        const SizedBox(height: 5,),
-                        Text(mosque.mosque_address, softWrap: true, style: TextStyle(color: Colors.brown[200])),
-                      ]
                   ),
-                )
-              ]
+                  const SizedBox(width: 10),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width*0.4,//solved by media query
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(mosque.mosque_name,softWrap: true, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                          const SizedBox(height: 5,),
+                          Text(mosque.mosque_address, softWrap: true, style: TextStyle(color: Colors.brown[200])),
+                        ]
+                    ),
+                  )
+                ]
+            ),
           ),
           GestureDetector(
             onTap: () {
