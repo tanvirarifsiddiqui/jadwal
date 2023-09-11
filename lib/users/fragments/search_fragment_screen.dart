@@ -119,7 +119,7 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
                   ),
                 ],
               );
-            }) : const Center(child: Text("No mosque found", style: TextStyle(color: Colors.white),)),
+            }) : const Center(child: Text("No mosque found", style: TextStyle(color: Colors.white))),
       )
           :const Center(child: CircularProgressIndicator())
     );
@@ -160,7 +160,7 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
                       children: [
                         Text(mosque.mosque_name,softWrap: true, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
                         const SizedBox(height: 5,),
-                        Text(mosque.mosque_address, softWrap: true, style: TextStyle(color: Colors.grey[500])),
+                        Text(mosque.mosque_address, softWrap: true, style: TextStyle(color: Colors.brown[200])),
                       ]
                   ),
                 )
@@ -169,6 +169,7 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
           GestureDetector(
             onTap: () {
               setState(() {
+                mosque.isConnectedByUser = !mosque.isConnectedByUser;
                 // _mosques.isFollowedByMe = !user.isFollowedByMe;todo ss
               });
             },
@@ -177,12 +178,12 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
                 width: 100,
                 duration: const Duration(milliseconds: 300),
                 decoration: BoxDecoration(
-                    color: mosque.isConnectedByUser ? Colors.blue[700] : Color(0xffffff),
+                    color: mosque.isConnectedByUser ? Colors.brown[800] : Color(0xffffff),
                     borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: mosque.isConnectedByUser ? Colors.transparent : Colors.grey.shade700,)
+                    border: Border.all(color: mosque.isConnectedByUser ? Colors.transparent : Colors.brown.shade200,)
                 ),
                 child: Center(
-                    child: Text(mosque.isConnectedByUser ? 'Disconnect' : 'Connect', style: TextStyle(color: mosque.isConnectedByUser ? Colors.white : Colors.white))
+                    child: Text(mosque.isConnectedByUser ? 'Disconnect' : 'Connect', style: TextStyle(color: mosque.isConnectedByUser ? Colors.white : Colors.brown[50]))
                 )
             ),
           )

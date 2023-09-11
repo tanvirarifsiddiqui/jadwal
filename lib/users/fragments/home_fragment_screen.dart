@@ -9,8 +9,8 @@ class HomeFragmentScreen extends StatefulWidget {
 
 class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
   final CurrentMosque _currentMosque1 = Get.put(CurrentMosque());
-  final CurrentMosque _currentMosque2 = Get.put(CurrentMosque());
-  final CurrentMosque _currentMosque3 = Get.put(CurrentMosque());
+  // final CurrentMosque _currentMosque2 = Get.put(CurrentMosque());
+  // final CurrentMosque _currentMosque3 = Get.put(CurrentMosque());
 
   bool _dataFetched = false; // Track if data has been fetched
 
@@ -59,7 +59,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.mosque,size: 30,color: Colors.amberAccent,),
+          const Icon(Icons.mosque,size: 30,color: Colors.black,),
           const SizedBox(width: 16,),
           Center(
             child: Text(
