@@ -80,7 +80,7 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
           ),
         ),
       ),
-      body: Container(
+      body:_mosques.isNotEmpty? Container(
         color: Colors.grey.shade900,
         child: _foundedMosques.isNotEmpty ? ListView.builder(
             itemCount: _foundedMosques.length,
@@ -119,8 +119,9 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
                   ),
                 ],
               );
-            }) : const Center(child: Text("No users found", style: TextStyle(color: Colors.white),)),
-      ),
+            }) : const Center(child: Text("No mosque found", style: TextStyle(color: Colors.white),)),
+      )
+          :const Center(child: CircularProgressIndicator())
     );
   }
 
@@ -136,9 +137,19 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
                 SizedBox(
                     width: 60,
                     height: 60,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.network(API.mosqueImage+mosque.mosque_image),
+                    child: ClipOval(
+
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(API.mosqueImage+mosque.mosque_image),
+                          )
+                        ),
+                      )
                     )
                 ),
                 const SizedBox(width: 10),
