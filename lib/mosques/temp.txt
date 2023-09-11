@@ -1,0 +1,52 @@
+    try{
+        final request = http.MultipartRequest(
+          'POST',
+          Uri.parse(API.signupAdmin),
+        );
+// Add text fields to the request
+        request.fields['admin_name'] = nameController.text.trim();
+        request.fields['admin_age'] = nameController.text.trim();
+        request.fields['admin_country'] = selectedCountry!.name;
+        request.fields['admin_state'] = selectedState!.name;
+        request.fields['admin_city'] = selectedCity!.name;
+        request.fields['admin_email'] = emailController.text.trim();
+        request.fields['admin_address'] = addressController.text.trim();
+        request.fields['admin_phone'] = phoneController.text.trim();
+        request.fields['mosque_id'] = _mosque.mosque_id;
+
+        // Add the image file to the request
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'admin_image',
+            imageFile!.path,
+            contentType: MediaType('image', 'jpg'), // Adjust the content type as needed
+          ),
+        );
+
+      try {
+        final response = await request.send();
+
+        if (response.statusCode == 200) {
+          // Handle the response here
+          final responseBody = await response.stream.bytesToString(); // Convert response stream to a string
+
+          final parsedResponse = json.decode(responseBody);
+
+          if (parsedResponse.containsKey('success')) {
+            Fluttertoast.showToast(msg: "You have successfully Registered your Admin Account.");
+            Get.offAll(AdminLoginScreen());
+          } else {
+            // 'yourField' is not present in the response
+            Fluttertoast.showToast(msg: "An Error occurred. Please try again later");
+          }
+        }
+        else {
+          Fluttertoast.showToast(msg: "Server not Responding, Please Try Again later");
+        }
+      } catch (e) {
+        Fluttertoast.showToast(msg: e.toString());
+      }
+    }
+    catch(e){
+      Fluttertoast.showToast(msg: e.toString());
+    }
