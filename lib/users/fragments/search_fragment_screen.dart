@@ -1,55 +1,81 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:jadwal/api_connection/api_connection.dart';
-import 'package:jadwal/controllers/fetch_search_info.dart';
-import 'package:jadwal/mosques/model/search_mosque_model.dart';
+
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:jadwal/mosques/profile/user_mosque_profile.dart';
-class SearchFragmentScreen extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:jadwal/controllers/search_mosque.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+
+class MapAndSearchFragmentScreen extends StatefulWidget {
+  const MapAndSearchFragmentScreen({super.key});
+
   @override
-  State<SearchFragmentScreen> createState() => _SearchFragmentScreenState();
+  State<MapAndSearchFragmentScreen> createState() => _MapAndSearchFragmentScreenState();
 }
 
-class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
-  List<SearchedMosque> _mosques = []; //List to Store Mosques
-  List<SearchedMosque> _foundedMosques = [];
-  int count = 0;
+class _MapAndSearchFragmentScreenState extends State<MapAndSearchFragmentScreen> {
+  late final WebViewController _controller;
+
+  //Requesting Location Permission
+  // bool locationEnabled = false;
+  Future<void> requestLocationPermission() async {
+    final LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      final bool isServiceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!isServiceEnabled) {
+        // Location services are not enabled, ask the user to enable them.
+        return;
+      }
+
+      // Request location permission.
+      final LocationPermission requestedPermission =
+      await Geolocator.requestPermission();
+      if (requestedPermission == LocationPermission.always) {
+        // Permission granted, you can now access the user's location.
+        // You can use Geolocator to get the user's current location.
+      } else {
+        // Permission denied, handle it accordingly.
+      }
+    } else if (permission == LocationPermission.always) {
+      // Permission has already been granted.
+      // You can use Geolocator to get the user's current location.
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    //fetching default profile image
-    if (_mosques.isEmpty) {
-      count++;
-      print(count);
-      //fetching country list
-      FetchSearchInfo.fetchMosques().then((mosqueList) {
-        setState(() {
-          _mosques = mosqueList;
-          _foundedMosques = _mosques;
-        });
-      }).catchError(
-          (error) {}); // Call this to fetch and populate the list of countries.
-    }// if block
+    requestLocationPermission();
 
-    setState(() {
-      _foundedMosques = _mosques;
-    });
-  }
+    // #docregion platform_features
+    late final PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
 
+    final WebViewController controller =
+    WebViewController.fromPlatformCreationParams(params);
+    // #enddocregion platform_features
 
-  //Etra todo hare to eliminate
-  TextEditingController _searchController = TextEditingController();
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(Uri.parse('https://www.google.com/maps/search/mosques'));
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }//todo till here
+    // #docregion platform_features
+    if (controller.platform is AndroidWebViewController) {
+      AndroidWebViewController.enableDebugging(true);
+      (controller.platform as AndroidWebViewController)
+          .setMediaPlaybackRequiresUserGesture(false);
+    }
+    // #enddocregion platform_features
 
-  onSearch(String search) {
-    setState(() {
-      _foundedMosques = _mosques.where((mosque) => mosque.mosque_name.toLowerCase().contains(search)).toList();
-    });
+    _controller = controller;
   }
 
   @override
@@ -61,141 +87,100 @@ class _SearchFragmentScreenState extends State<SearchFragmentScreen> {
         backgroundColor: Colors.brown.shade800,
         title: SizedBox(
           height: 38,
-          child: TextField(
-            style: TextStyle(color: Colors.brown[200]),
-            onChanged: (value) => onSearch(value),
-            decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.brown[900],
-                contentPadding: const EdgeInsets.all(0),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.brown.shade200,
-                ),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide.none),
-                hintStyle:
-                    TextStyle(fontSize: 14, color: Colors.brown.shade200),
-                hintText: "Search mosques"),
-          ),
-        ),
-      ),
-      body:_mosques.isNotEmpty? Container(
-        color: Colors.grey.shade900,
-        child: _foundedMosques.isNotEmpty ? ListView.builder(
-            itemCount: _foundedMosques.length,
-            itemBuilder: (context, index) {
-              return Slidable(
-                actionPane: const SlidableDrawerActionPane(),
-                actionExtentRatio: 0.25,
-                child: mosqueComponent(mosque: _foundedMosques[index]),
-                actions: <Widget>[
-                  IconSlideAction(
-                    caption: 'Archive',
-                    color: Colors.transparent,
-                    icon: Icons.archive,
-
-                    onTap: () => print("archive"),
-                  ),
-                  IconSlideAction(
-                    caption: 'Share',
-                    color: Colors.transparent,
-                    icon: Icons.share,
-                    onTap: () => print('Share'),
-                  ),
-                ],
-                secondaryActions: <Widget>[
-                  IconSlideAction(
-                    caption: 'More',
-                    color: Colors.transparent,
-                    icon: Icons.more_horiz,
-                    onTap: () => print('More'),
-                  ),
-                  IconSlideAction(
-                    caption: 'Delete',
-                    color: Colors.transparent,
-                    icon: Icons.delete,
-                    onTap: () => print('Delete'),
-                  ),
-                ],
-              );
-            }) : const Center(child: Text("No mosque found", style: TextStyle(color: Colors.white))),
-      )
-          :const Center(child: CircularProgressIndicator())
-    );
-  }
-
-  mosqueComponent({required SearchedMosque mosque}) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          InkWell(
-            onTap: (){
-              // Get.to(MosqueProfileUser(mosqueId: mosque.mosque_id));
-              Get.to(() => UserMosqueProfile(mosqueId: mosque.mosque_id, isConnectedByUser: mosque.isConnectedByUser));
+          child:GestureDetector(
+            onTap: () {
+              Get.to(()=>SearchMosqueScreen());
             },
-            child: Row(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.brown[900],
+                borderRadius: BorderRadius.circular(50),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
                 children: [
-                  SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: ClipOval(
-
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(API.mosqueImage+mosque.mosque_image),
-                            )
-                          ),
-                        )
-                      )
+                  Icon(
+                    Icons.search,
+                    color: Colors.brown.shade200,
                   ),
                   const SizedBox(width: 10),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width*0.4,//solved by media query
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(mosque.mosque_name,softWrap: true, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 5,),
-                          Text(mosque.mosque_address, softWrap: true, style: TextStyle(color: Colors.brown[200])),
-                        ]
+                  Text(
+                    "Search mosques in Jadwal",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.brown.shade200,
                     ),
-                  )
-                ]
+                  ),
+                ],
+              ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                mosque.isConnectedByUser = !mosque.isConnectedByUser;
-                // _mosques.isFollowedByMe = !user.isFollowedByMe;todo ss
-              });
-            },
-            child: AnimatedContainer(
-                height: 35,
-                width: 100,
-                duration: const Duration(milliseconds: 300),
-                decoration: BoxDecoration(
-                    color: mosque.isConnectedByUser ? Colors.brown[800] : Color(0xffffff),
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: mosque.isConnectedByUser ? Colors.transparent : Colors.brown.shade200,)
-                ),
-                child: Center(
-                    child: Text(mosque.isConnectedByUser ? 'Disconnect' : 'Connect', style: TextStyle(color: mosque.isConnectedByUser ? Colors.white : Colors.brown[50]))
-                )
-            ),
-          )
-        ],
+
+
+        ),
       ),
+      body: WebViewWidget(controller: _controller),
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.brown.shade900,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+            children: <Widget>[
+              const SizedBox(width: 16,),
+              Text('Map Mosque',style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500,color: Colors.brown.shade200)),
+              const Spacer(),
+              NavigationControls(webViewController: _controller),
+              // Add any other bottom bar elements here
+            ],
+          ),
+        )
+    );
+  }
+}
+
+  // bottom navigation control
+class NavigationControls extends StatelessWidget {
+  const NavigationControls({super.key, required this.webViewController});
+
+  final WebViewController webViewController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.arrow_back_ios,color: Colors.grey,),
+          onPressed: () async {
+            if (await webViewController.canGoBack()) {
+              await webViewController.goBack();
+            } else {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No back history item')),
+                );
+              }
+            }
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.arrow_forward_ios,color: Colors.grey),
+          onPressed: () async {
+            if (await webViewController.canGoForward()) {
+              await webViewController.goForward();
+            } else {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No forward history item')),
+                );
+              }
+            }
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.replay,color: Colors.grey),
+          onPressed: () => webViewController.reload(),
+        ),
+      ],
     );
   }
 }

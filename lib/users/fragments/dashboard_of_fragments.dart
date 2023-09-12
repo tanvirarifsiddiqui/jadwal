@@ -14,7 +14,7 @@ class DashboardOfFragments extends StatelessWidget {
   final List<Widget> _fragmentScreens = [
     HomeFragmentScreen(),
     AnnouncementFragmentScreen(),
-    SearchFragmentScreen(),
+    MapAndSearchFragmentScreen(),
     NotificationFragmentScreen(),
     ProfileFragmentScreen()
   ];
