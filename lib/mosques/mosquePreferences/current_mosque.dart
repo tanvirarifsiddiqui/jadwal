@@ -5,7 +5,7 @@ import 'package:jadwal/mosques/model/mosque.dart';
 
 class CurrentMosque extends GetxController{
 
-  final Rx<Mosque> _currentMosque = Mosque(0, '', '', '', '', '','','',TimeOfDay.now(),TimeOfDay.now(),TimeOfDay.now(),TimeOfDay.now(),TimeOfDay.now(),TimeOfDay.now()).obs;
+  final Rx<Mosque> _currentMosque = Mosque(0, '', '', '', '', '','','','',TimeOfDay.now(),TimeOfDay.now(),TimeOfDay.now(),TimeOfDay.now(),TimeOfDay.now(),TimeOfDay.now()).obs;
 
   Mosque get mosque=> _currentMosque.value;
 

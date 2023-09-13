@@ -9,6 +9,7 @@ class Mosque{
   String mosque_state;
   String mosque_city;
   String mosque_address;
+  String connectors;
   TimeOfDay fajr;
   TimeOfDay zuhr;
   TimeOfDay asr;
@@ -25,6 +26,7 @@ class Mosque{
       this.mosque_state,
       this.mosque_city,
       this.mosque_address,
+      this.connectors,
       this.fajr,
       this.zuhr,
       this.asr,
@@ -42,6 +44,7 @@ class Mosque{
       json["mosque_state"],
       json["mosque_city"],
       json["mosque_address"],
+      json["connectors"],
     _parseTimeOfDay(json["fajr"]), // Use a helper function to parse TimeOfDay
     _parseTimeOfDay(json["zuhr"]),
     _parseTimeOfDay(json["asr"]),
@@ -59,6 +62,7 @@ class Mosque{
     'mosque_state' : mosque_state,
     'mosque_city' : mosque_city,
     'mosque_address' : mosque_address,
+    'connectors' : connectors,
     "fajr": _formatTimeOfDay(fajr), // Use a helper function to format TimeOfDay
     "zuhr": _formatTimeOfDay(zuhr),
     "asr": _formatTimeOfDay(asr),

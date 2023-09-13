@@ -267,10 +267,11 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                   height: 20,
                 ),
 
+                //mosque name and connectors
                 mosqueInfoItemProfile(Icons.mosque, _currentMosque!.mosque_name),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10,),
+                mosqueInfoItemProfile(Icons.connect_without_contact, "${_currentMosque!.connectors} connectors"),
+                const SizedBox(height: 10,),
 
                 //connect button
                 Padding(

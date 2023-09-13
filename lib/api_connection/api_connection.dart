@@ -24,8 +24,11 @@ class API{
   static const getMosqueData = "$hostConnect/mosque/get_data.php";
   static const getMosqueDataById = "$hostConnect/mosque/get_data_by_id.php";
   static const getSearchedMosqueData = "$hostConnect/mosque/search_mosque.php";
+
+  //mosque operation
   static const mosqueImage = "$hostConnect/images/mosque_images/";
   static const updateMosqueTime = "$hostConnect/mosque/update_time.php";
+  static const getTotalMosqueConnections = "$hostConnect/mosque/mosque_operation/total_connections.php";
 
   //signUP admin
   static const validateAdminEmail = "$hostConnect/admin/validate_email.php";

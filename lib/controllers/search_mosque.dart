@@ -13,14 +13,12 @@ class SearchMosqueScreen extends StatefulWidget {
 class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
   List<SearchedMosque> _mosques = []; //List to Store Mosques
   List<SearchedMosque> _foundedMosques = [];
-  int count = 0;
+
   @override
   void initState() {
     super.initState();
     //fetching default profile image
     if (_mosques.isEmpty) {
-      count++;
-      print(count);
       //fetching country list
       FetchSearchInfo.fetchMosques().then((mosqueList) {
         setState(() {
@@ -35,16 +33,6 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
       _foundedMosques = _mosques;
     });
   }
-
-
-  //Etra todo hare to eliminate
-  TextEditingController _searchController = TextEditingController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }//todo till here
 
   onSearch(String search) {
     setState(() {
@@ -173,27 +161,11 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
                 ]
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                mosque.isConnectedByUser = !mosque.isConnectedByUser;
-                // _mosques.isFollowedByMe = !user.isFollowedByMe;todo ss
-              });
-            },
-            child: AnimatedContainer(
-                height: 35,
-                width: 100,
-                duration: const Duration(milliseconds: 300),
-                decoration: BoxDecoration(
-                    color: mosque.isConnectedByUser ? Colors.brown[800] : Color(0xffffff),
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: mosque.isConnectedByUser ? Colors.transparent : Colors.brown.shade200,)
-                ),
-                child: Center(
-                    child: Text(mosque.isConnectedByUser ? 'Disconnect' : 'Connect', style: TextStyle(color: mosque.isConnectedByUser ? Colors.white : Colors.brown[50]))
-                )
-            ),
-          )
+          const SizedBox(height: 5), // Add space between address and connection text
+          Text(
+            '${mosque.connectors} Connectors', // Replace with your mosque connection data
+            style: TextStyle(color: Colors.white70), // Style for connection text
+          ),
         ],
       ),
     );
