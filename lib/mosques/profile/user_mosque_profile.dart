@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+import 'package:jadwal/users/userPreferences/current_user.dart';
 
 import '../../api_connection/api_connection.dart';
 import '../model/mosque.dart';
@@ -9,11 +11,9 @@ import 'package:http/http.dart' as http;
 
 class UserMosqueProfile extends StatefulWidget {
   final int mosqueId;
-  final bool isConnectedByUser;
 
   const UserMosqueProfile({
     required this.mosqueId,
-    required this.isConnectedByUser,
     Key? key,
   }) : super(key: key);
 
@@ -24,12 +24,14 @@ class UserMosqueProfile extends StatefulWidget {
 //main portion
 class _UserMosqueProfileState extends State<UserMosqueProfile> {
   Mosque? _currentMosque;
-  late bool isConnected = widget.isConnectedByUser;
+  final CurrentUser _currentUser = Get.put(CurrentUser());
+  late bool isConnected = false;
 
   @override
   void initState() {
     super.initState();
     getMosqueInfo();
+    getMosqueConnectionStatus();
   }
 
   //get Mosque Information
@@ -49,6 +51,64 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
         } else {
           Fluttertoast.showToast(msg: "Mosque Not found");
         }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  getMosqueConnectionStatus()async{
+    try {
+      var res = await http.post(Uri.parse(API.getConnectionStatus), body: {
+        'mosque_id': widget.mosqueId.toString(),
+        'user_id': _currentUser.user.user_id.toString()
+      });
+      if (res.statusCode == 200) {
+        //connection with api to server - Successful
+        var resBodyOfMosqueData = jsonDecode(res.body);
+
+        if (resBodyOfMosqueData['success']) //Successfully Connected Or Disconnected
+        {
+            isConnected = true;
+        }
+        else {
+            isConnected = false;
+        }
+      }else{
+        Fluttertoast.showToast(msg: "Server Not Responding");
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  sendMosqueConnectionStatus()async{
+    try {
+      var res = await http.post(Uri.parse(API.setConnectionStatus), body: {
+        'connection_status': isConnected.toString(),
+        'mosque_id': widget.mosqueId.toString(),
+        'user_id': _currentUser.user.user_id.toString()
+      });
+      if (res.statusCode == 200) {
+        //connection with api to server - Successful
+        var resBodyOfMosqueData = jsonDecode(res.body);
+
+        if (resBodyOfMosqueData['success']) //Successfully Connected Or Disconnected
+        {
+          setState(() {
+            isConnected = !isConnected;
+          });
+          if(isConnected){
+            Fluttertoast.showToast(msg: "Successfully Connected");
+          }else{
+            Fluttertoast.showToast(msg: "Successfully Disconnected");
+          }
+        }
+        else {
+          Fluttertoast.showToast(msg: resBodyOfMosqueData['message']);
+        }
+      }else{
+          Fluttertoast.showToast(msg: "Server Not Responding");
       }
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
@@ -218,8 +278,8 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        isConnected = !isConnected;
-                        // _mosques.isFollowedByMe = !user.isFollowedByMe;todo ss
+                      //sending connection states to the database
+                      sendMosqueConnectionStatus();
                       });
                     },
                     child: AnimatedContainer(

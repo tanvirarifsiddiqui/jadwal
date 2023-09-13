@@ -136,7 +136,7 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
           InkWell(
             onTap: (){
               // Get.to(MosqueProfileUser(mosqueId: mosque.mosque_id));
-              Get.to(() => UserMosqueProfile(mosqueId: mosque.mosque_id, isConnectedByUser: mosque.isConnectedByUser));
+              Get.to(() => UserMosqueProfile(mosqueId: mosque.mosque_id));
             },
             child: Row(
                 children: [
