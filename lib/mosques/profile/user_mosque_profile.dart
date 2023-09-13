@@ -20,38 +20,37 @@ class UserMosqueProfile extends StatefulWidget {
   @override
   State<UserMosqueProfile> createState() => _UserMosqueProfileState();
 }
+
 //main portion
 class _UserMosqueProfileState extends State<UserMosqueProfile> {
   Mosque? _currentMosque;
+  late bool isConnected = widget.isConnectedByUser;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     getMosqueInfo();
   }
 
   //get Mosque Information
-  getMosqueInfo()async {
-    try{
-      var res = await http.post(Uri.parse(API.getMosqueDataById),
-          body: {
-            'mosque_id': widget.mosqueId.toString(),
-          });
-      if(res.statusCode == 200){ //connection with api to server - Successful
+  getMosqueInfo() async {
+    try {
+      var res = await http.post(Uri.parse(API.getMosqueDataById), body: {
+        'mosque_id': widget.mosqueId.toString(),
+      });
+      if (res.statusCode == 200) {
+        //connection with api to server - Successful
         var resBodyOfMosqueData = jsonDecode(res.body);
 
-        if(resBodyOfMosqueData['success']){
+        if (resBodyOfMosqueData['success']) {
           setState(() {
             _currentMosque = Mosque.fromJson(resBodyOfMosqueData["mosqueData"]);
           });
-
-        }
-        else{
+        } else {
           Fluttertoast.showToast(msg: "Mosque Not found");
         }
       }
-    }
-    catch(e){
+    } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
   }
@@ -92,10 +91,10 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
   Widget prayerTimeItem(String prayerName, TimeOfDay prayerTime) {
     return Card(
       elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        color: Colors.brown[300],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      color: Colors.brown[300],
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 8,
@@ -111,10 +110,12 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                 color: Colors.black,
               ),
             ),
-            const Divider(color: Colors.black,),
+            const Divider(
+              color: Colors.black,
+            ),
             Text(
               // prayerTime.value,
-              "${prayerTime.hour.toString().padLeft(2,"0")}:${prayerTime.minute.toString().padLeft(2,"0")}",
+              "${prayerTime.hour.toString().padLeft(2, "0")}:${prayerTime.minute.toString().padLeft(2, "0")}",
               style: const TextStyle(
                 fontSize: 42,
                 color: Colors.black,
@@ -127,118 +128,150 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
   }
 
   //inside row view of prayer time
-  Widget _buildPrayerTimeWidgets(){
+  Widget _buildPrayerTimeWidgets() {
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Flexible(child: prayerTimeItem('Fajr', _currentMosque!.fajr)),
-            const SizedBox(width: 10,),
+            const SizedBox(
+              width: 10,
+            ),
             Flexible(child: prayerTimeItem('Zuhr', _currentMosque!.zuhr)),
           ],
         ),
 
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Flexible(child: prayerTimeItem('Asr', _currentMosque!.asr)),
-            const SizedBox(width: 10,),
+            const SizedBox(
+              width: 10,
+            ),
             Flexible(child: prayerTimeItem('Maghrib', _currentMosque!.maghrib)),
           ],
         ),
 
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Flexible(child: prayerTimeItem('Isha', _currentMosque!.isha)),
-            const SizedBox(width: 10,),
+            const SizedBox(
+              width: 10,
+            ),
             Flexible(child: prayerTimeItem('Jumuah', _currentMosque!.jumuah)),
           ],
         ),
 
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
 
         // Add more widget boxes as needed
       ],
     );
-
   }
+
   @override
   Widget build(BuildContext context) {
+    return _currentMosque != null
+        ? Material(color: Colors.grey.shade900,
+          child: ListView(
+              padding: const EdgeInsets.all(32),
+              children: [
+                //profile image
+                Center(
+                    child: ClipOval(
+                  child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                                "${API.mosqueImage}${_currentMosque!.mosque_image}")),
+                      )),
+                )),
 
-    return _currentMosque!= null? ListView(
-      padding: const EdgeInsets.all(32),
-      children: [
-        //profile image
-        Center(
-            child: ClipOval(child:Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage("${API.mosqueImage}${_currentMosque!.mosque_image}")
-                  ),
-                )
-            ),
-            )
-        ),
-
-        const SizedBox(height: 20,),
-
-        mosqueInfoItemProfile(Icons.mosque, _currentMosque!.mosque_name),
-        const SizedBox(height: 10,),
-
-        _buildPrayerTimeWidgets(),
-
-        mosqueInfoItemProfile(Icons.email, _currentMosque!.mosque_email),
-        const SizedBox(height: 10,),
-
-        mosqueInfoItemProfile(Icons.flag, _currentMosque!.mosque_country),
-        const SizedBox(height: 10,),
-
-        mosqueInfoItemProfile(Icons.location_city, _currentMosque!.mosque_state),
-        const SizedBox(height: 10,),
-
-        mosqueInfoItemProfile(Icons.house, _currentMosque!.mosque_city),
-        const SizedBox(height: 10,),
-
-        mosqueInfoItemProfile(Icons.location_pin, _currentMosque!.mosque_address),
-        const SizedBox(height: 10,),
-
-        Center(
-          child: Material(
-            color: Colors.amber[700],
-            borderRadius: BorderRadius.circular(8),
-            child: InkWell(
-              onTap: (){
-                //todo make connection system
-              },
-              borderRadius: BorderRadius.circular(32),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 12
+                const SizedBox(
+                  height: 20,
                 ),
-                child: Text(
-                  "Connect",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+
+                mosqueInfoItemProfile(Icons.mosque, _currentMosque!.mosque_name),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                //connect button
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isConnected = !isConnected;
+                        // _mosques.isFollowedByMe = !user.isFollowedByMe;todo ss
+                      });
+                    },
+                    child: AnimatedContainer(
+                        height: 45,
+                        width: 100,
+                        duration: const Duration(milliseconds: 80),
+                        decoration: BoxDecoration(
+                            color: isConnected ? Colors.brown[800] : Color(0xffffff),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: isConnected ? Colors.brown : Colors.brown.shade200,)
+                        ),
+                        child: Center(
+                            child: Text(isConnected ? 'Disconnect' : 'Connect', style: TextStyle(
+                              fontSize: 25,
+                                color: isConnected ? Colors.white : Colors.brown[50]))
+                        )
+                    ),
                   ),
                 ),
-              ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                _buildPrayerTimeWidgets(),
+
+                mosqueInfoItemProfile(Icons.email, _currentMosque!.mosque_email),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                mosqueInfoItemProfile(Icons.flag, _currentMosque!.mosque_country),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                mosqueInfoItemProfile(
+                    Icons.location_city, _currentMosque!.mosque_state),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                mosqueInfoItemProfile(Icons.house, _currentMosque!.mosque_city),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                mosqueInfoItemProfile(
+                    Icons.location_pin, _currentMosque!.mosque_address),
+              ],
             ),
-          ),
         )
-      ],
-    )
-        :const Center(child: CircularProgressIndicator());
+        : const Center(child: CircularProgressIndicator());
   }
 }

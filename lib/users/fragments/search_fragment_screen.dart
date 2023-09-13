@@ -127,7 +127,7 @@ class _MapAndSearchFragmentScreenState extends State<MapAndSearchFragmentScreen>
 
             children: <Widget>[
               const SizedBox(width: 16,),
-              Text('Map Mosque',style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500,color: Colors.brown.shade200)),
+              Text('Mosques in Map',style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500,color: Colors.brown.shade200)),
               const Spacer(),
               NavigationControls(webViewController: _controller),
               // Add any other bottom bar elements here
