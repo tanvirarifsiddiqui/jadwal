@@ -31,7 +31,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
   final List<Map<String, dynamic>> _items = List.generate(
       5,
       (index) => {
-            "id": index,
+            "id": index+10,
             "title": "Mosque $index",
             "content":
                 "This is the main content of item $index. It is very long and you have to expand the tile to see it."
@@ -43,51 +43,77 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade900,
-      body: ListView.builder(
-              itemCount: _items.length,
-              itemBuilder: (_, index) {
-                final item = _items[index];
-                return Card(
-                  key: PageStorageKey(item['id']),
-                  color: Colors.brown[700],
-                  elevation: 4,
-                  child: ExpansionTile(
-                      iconColor: Colors.white,
-                      collapsedIconColor: Colors.white,
-                      childrenPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 20),
-                      // expandedCrossAxisAlignment: CrossAxisAlignment.end,
-                      title: Text(
-                        item['title'],
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      children: [
-                        Text(item['content'],
-                            style: const TextStyle(color: Colors.white)),
-                        SizedBox(height: 15,),
-                        // This button is used to remove this item
-                        GestureDetector(
-                          onTap: () {
-                            Get.to(()=>UserMosqueProfile(mosqueId: 48));
-                          },
-                          child: Container(
-                              height: 35,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                  color: Colors.brown[900],
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.brown.shade200,)
-                              ),
-                              child: Center(
-                                  child: Text('View Profile', style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.brown[50]))
-                              )
+      body: ReorderableListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (_, index) {
+          final item = _items[index];
+          return Card(
+            key: ValueKey(item['id']), // Use ValueKey for ReorderableListView
+            color: Colors.brown[800],
+            elevation: 4,
+            child: Column(
+              children: [
+                ExpansionTile(
+                  iconColor: Colors.white,
+                  collapsedIconColor: Colors.white,
+                  childrenPadding: const EdgeInsets.symmetric(
+                      vertical: 10, horizontal: 20),
+                  title: Text(
+                    item['title'],
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  children: [
+                    Text(
+                      item['content'],
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 15),
+                    // This button is used to remove this item
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(() => UserMosqueProfile(mosqueId: 48));
+                      },
+                      child: Container(
+                        height: 35,
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.brown[900],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.brown.shade200,
                           ),
                         ),
-                      ]),
-                );
-              })
+                        child: Center(
+                          child: Text(
+                            'View Profile',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.brown[50],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+        onReorder: (oldIndex, newIndex) {
+          // Handle the reorder logic here
+          setState(() {
+            if (oldIndex < newIndex) {
+              newIndex -= 1; // Adjust the new index after removing the item
+            }
+            final item = _items.removeAt(oldIndex);
+            _items.insert(newIndex, item);
+          });
+          print("old index = ${oldIndex}");
+          print("new index = ${newIndex}");
+        },
+      ),
+
 
     );
   }
