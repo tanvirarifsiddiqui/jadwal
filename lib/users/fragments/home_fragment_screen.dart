@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
+import 'package:jadwal/mosques/model/user_home_mosque_model.dart';
 import 'package:jadwal/mosques/profile/user_mosque_profile.dart';
+import 'package:jadwal/users/userPreferences/current_user.dart';
+
+import '../../controllers/users_fetch_info.dart';
 
 class HomeFragmentScreen extends StatefulWidget {
   @override
@@ -9,46 +14,62 @@ class HomeFragmentScreen extends StatefulWidget {
 }
 
 class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
-  final CurrentMosque _currentMosque1 = Get.put(CurrentMosque());
-
-  bool _dataFetched = false; // Track if data has been fetched
-
+  final CurrentUser _currentUser = Get.put(CurrentUser());
+  bool _dataFetched = false;
   @override
   void initState() {
     super.initState();
-    _fetchPrayerTimes(); // Fetch the prayer times when the widget is initialized
+    _fetchUserMosqueInfo();
   }
-
-  Future<void> _fetchPrayerTimes() async {
-    await _currentMosque1
-        .getMosqueInfo(); // Fetch the prayer times from the database
+  Future<void> _fetchUserMosqueInfo() async {
+    await _currentUser.getUserInfo(); // Fetch the prayer times from the database
+    ///big problem solved
+    await _fetchConnectedMosqueInfo(); // Fetch the prayer times when the widget is initialized
     setState(() {
       _dataFetched = true;
     }); // Trigger a rebuild after fetching the data
   }
+  //mosques list
+  List<MosqueUserHome> _mosques = [];
 
-  ///source code for expansion Tile
-  final List<Map<String, dynamic>> _items = List.generate(
-      5,
-      (index) => {
-            "id": index+10,
-            "title": "Mosque $index",
-            "content":
-                "This is the main content of item $index. It is very long and you have to expand the tile to see it."
-          });
+  Future<void> _fetchConnectedMosqueInfo() async {
+    if (_mosques.isEmpty) {
+      //fetching country list
+      await UsersServerOperation.fetchMosquesForHome(_currentUser.user.user_id)
+          .then((mosqueList) {
+        setState(() {
+          _mosques = mosqueList;
+        });
+      }).catchError((error) {});
+    }
+  }
 
 
+// function for new oreder saving to database
+  Future<void> saveOrder() async {
+    List<Map<String, dynamic>> reorderedMosqueOrder = [];
+
+    for (int newIndex = 0; newIndex < _mosques.length; newIndex++) {
+      reorderedMosqueOrder.add({
+        "user_id": _currentUser.user.user_id,
+        "mosque_id": _mosques[newIndex].mosque_id,
+        "order_index": newIndex + 1,
+      });
+    }
+    String reorderedMosqueOrderJson = json.encode(reorderedMosqueOrder);
+    UsersServerOperation.sendMosqueOrder(reorderedMosqueOrderJson);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade900,
-      body: ReorderableListView.builder(
-        itemCount: _items.length,
+      body:_dataFetched? ReorderableListView.builder(
+        itemCount: _mosques.length,
         itemBuilder: (_, index) {
-          final item = _items[index];
           return Card(
-            key: ValueKey(item['id']), // Use ValueKey for ReorderableListView
+            key: ValueKey(
+                _mosques[index]), // Use ValueKey for ReorderableListView
             color: Colors.brown[800],
             elevation: 4,
             child: Column(
@@ -56,22 +77,23 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                 ExpansionTile(
                   iconColor: Colors.white,
                   collapsedIconColor: Colors.white,
-                  childrenPadding: const EdgeInsets.symmetric(
-                      vertical: 10, horizontal: 20),
+                  childrenPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   title: Text(
-                    item['title'],
+                    _mosques[index].mosque_name,
                     style: const TextStyle(color: Colors.white),
                   ),
                   children: [
                     Text(
-                      item['content'],
+                      _mosques[index].mosque_address,
                       style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     // This button is used to remove this item
                     GestureDetector(
                       onTap: () {
-                        Get.to(() => UserMosqueProfile(mosqueId: 48));
+                        Get.to(() => UserMosqueProfile(
+                            mosqueId: _mosques[index].mosque_id));
                       },
                       child: Container(
                         height: 35,
@@ -106,15 +128,15 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
             if (oldIndex < newIndex) {
               newIndex -= 1; // Adjust the new index after removing the item
             }
-            final item = _items.removeAt(oldIndex);
-            _items.insert(newIndex, item);
+            //reordering mosque list
+            final draggedMosque = _mosques.removeAt(oldIndex); //removing mosque from old index
+            _mosques.insert(newIndex, draggedMosque); //assigning mosque to new index
           });
-          print("old index = ${oldIndex}");
-          print("new index = ${newIndex}");
+          /// save this order in database
+          saveOrder();
         },
-      ),
-
-
+      )
+      : const Center(child: CircularProgressIndicator())
     );
   }
 //todo uncommentable under listview.builder

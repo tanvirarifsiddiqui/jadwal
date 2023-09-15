@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
-import 'package:jadwal/controllers/fetch_search_info.dart';
+import 'package:jadwal/controllers/users_fetch_info.dart';
 import 'package:jadwal/mosques/model/search_mosque_model.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/mosques/profile/user_mosque_profile.dart';
@@ -20,7 +20,7 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
     //fetching default profile image
     if (_mosques.isEmpty) {
       //fetching country list
-      FetchSearchInfo.fetchMosques().then((mosqueList) {
+      UsersServerOperation.fetchMosquesForSearch().then((mosqueList) {
         setState(() {
           _mosques = mosqueList;
           _foundedMosques = _mosques;
