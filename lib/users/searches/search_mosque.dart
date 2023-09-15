@@ -5,6 +5,7 @@ import 'package:jadwal/controllers/users_fetch_info.dart';
 import 'package:jadwal/mosques/model/search_mosque_model.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/mosques/profile/user_mosque_profile.dart';
+
 class SearchMosqueScreen extends StatefulWidget {
   @override
   State<SearchMosqueScreen> createState() => _SearchMosqueScreenState();
@@ -26,8 +27,8 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
           _foundedMosques = _mosques;
         });
       }).catchError(
-              (error) {}); // Call this to fetch and populate the list of countries.
-    }// if block
+          (error) {}); // Call this to fetch and populate the list of countries.
+    } // if block
 
     setState(() {
       _foundedMosques = _mosques;
@@ -36,7 +37,9 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
 
   onSearch(String search) {
     setState(() {
-      _foundedMosques = _mosques.where((mosque) => mosque.mosque_name.toLowerCase().contains(search)).toList();
+      _foundedMosques = _mosques
+          .where((mosque) => mosque.mosque_name.toLowerCase().contains(search))
+          .toList();
     });
   }
 
@@ -64,54 +67,58 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
                       borderRadius: BorderRadius.circular(50),
                       borderSide: BorderSide.none),
                   hintStyle:
-                  TextStyle(fontSize: 14, color: Colors.brown.shade200),
+                      TextStyle(fontSize: 14, color: Colors.brown.shade200),
                   hintText: "Search mosques"),
             ),
           ),
         ),
-        body:_mosques.isNotEmpty? Container(
-          color: Colors.grey.shade900,
-          child: _foundedMosques.isNotEmpty ? ListView.builder(
-              itemCount: _foundedMosques.length,
-              itemBuilder: (context, index) {
-                return Slidable(
-                  actionPane: const SlidableDrawerActionPane(),
-                  actionExtentRatio: 0.25,
-                  child: mosqueComponent(mosque: _foundedMosques[index]),
-                  actions: <Widget>[
-                    IconSlideAction(
-                      caption: 'Archive',
-                      color: Colors.transparent,
-                      icon: Icons.archive,
-
-                      onTap: () => print("archive"),
-                    ),
-                    IconSlideAction(
-                      caption: 'Share',
-                      color: Colors.transparent,
-                      icon: Icons.share,
-                      onTap: () => print('Share'),
-                    ),
-                  ],
-                  secondaryActions: <Widget>[
-                    IconSlideAction(
-                      caption: 'More',
-                      color: Colors.transparent,
-                      icon: Icons.more_horiz,
-                      onTap: () => print('More'),
-                    ),
-                    IconSlideAction(
-                      caption: 'Delete',
-                      color: Colors.transparent,
-                      icon: Icons.delete,
-                      onTap: () => print('Delete'),
-                    ),
-                  ],
-                );
-              }) : const Center(child: Text("No mosque found", style: TextStyle(color: Colors.white))),
-        )
-            :const Center(child: CircularProgressIndicator())
-    );
+        body: _mosques.isNotEmpty
+            ? Container(
+                color: Colors.grey.shade900,
+                child: _foundedMosques.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: _foundedMosques.length,
+                        itemBuilder: (context, index) {
+                          return Slidable(
+                            actionPane: const SlidableDrawerActionPane(),
+                            actionExtentRatio: 0.25,
+                            child:
+                                mosqueComponent(mosque: _foundedMosques[index]),
+                            actions: <Widget>[
+                              IconSlideAction(
+                                caption: 'Archive',
+                                color: Colors.transparent,
+                                icon: Icons.archive,
+                                onTap: () => print("archive"),
+                              ),
+                              IconSlideAction(
+                                caption: 'Share',
+                                color: Colors.transparent,
+                                icon: Icons.share,
+                                onTap: () => print('Share'),
+                              ),
+                            ],
+                            secondaryActions: <Widget>[
+                              IconSlideAction(
+                                caption: 'More',
+                                color: Colors.transparent,
+                                icon: Icons.more_horiz,
+                                onTap: () => print('More'),
+                              ),
+                              IconSlideAction(
+                                caption: 'Delete',
+                                color: Colors.transparent,
+                                icon: Icons.delete,
+                                onTap: () => print('Delete'),
+                              ),
+                            ],
+                          );
+                        })
+                    : const Center(
+                        child: Text("No mosque found",
+                            style: TextStyle(color: Colors.white))),
+              )
+            : const Center(child: CircularProgressIndicator()));
   }
 
   mosqueComponent({required SearchedMosque mosque}) {
@@ -122,49 +129,54 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           InkWell(
-            onTap: (){
+            onTap: () {
               // Get.to(MosqueProfileUser(mosqueId: mosque.mosque_id));
               Get.to(() => UserMosqueProfile(mosqueId: mosque.mosque_id));
             },
-            child: Row(
-                children: [
-                  SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: ClipOval(
-
-                          child: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(API.mosqueImage+mosque.mosque_image),
-                                )
-                            ),
-                          )
-                      )
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width*0.4,//solved by media query
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(mosque.mosque_name,softWrap: true, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 5,),
-                          Text(mosque.mosque_address, softWrap: true, style: TextStyle(color: Colors.brown[200])),
-                        ]
-                    ),
-                  )
-                ]
-            ),
-          ),
-          const SizedBox(height: 5), // Add space between address and connection text
-          Text(
-            '${mosque.connectors} Connectors', // Replace with your mosque connection data
-            style: TextStyle(color: Colors.white70), // Style for connection text
+            child: Row(children: [
+              SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: ClipOval(
+                      child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                              API.mosqueImage + mosque.mosque_image),
+                        )),
+                  ))),
+              const SizedBox(width: 10),
+              SizedBox(
+                width: MediaQuery.of(context).size.width *
+                    0.4, //solved by media query
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(mosque.mosque_name,
+                          softWrap: true,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500)),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(mosque.mosque_address,
+                          softWrap: true,
+                          style: TextStyle(color: Colors.brown[200])),
+                    ]),
+              ),
+              const SizedBox(
+                  height: 5), // Add space between address and connection text
+              Text(
+                '${mosque.connectors} Connectors', // Replace with your mosque connection data
+                style: TextStyle(
+                    color: Colors.white70), // Style for connection text
+              ),
+            ]),
           ),
         ],
       ),

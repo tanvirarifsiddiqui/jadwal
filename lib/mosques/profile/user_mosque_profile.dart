@@ -57,7 +57,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
     }
   }
 
-  getMosqueConnectionStatus()async{
+  getMosqueConnectionStatus() async {
     try {
       var res = await http.post(Uri.parse(API.getConnectionStatus), body: {
         'mosque_id': widget.mosqueId.toString(),
@@ -67,14 +67,14 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
         //connection with api to server - Successful
         var resBodyOfMosqueData = jsonDecode(res.body);
 
-        if (resBodyOfMosqueData['success']) //Successfully Connected Or Disconnected
+        if (resBodyOfMosqueData[
+            'success']) //Successfully Connected Or Disconnected
         {
-            isConnected = true;
+          isConnected = true;
+        } else {
+          isConnected = false;
         }
-        else {
-            isConnected = false;
-        }
-      }else{
+      } else {
         Fluttertoast.showToast(msg: "Server Not Responding");
       }
     } catch (e) {
@@ -82,7 +82,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
     }
   }
 
-  sendMosqueConnectionStatus()async{
+  sendMosqueConnectionStatus() async {
     try {
       var res = await http.post(Uri.parse(API.setConnectionStatus), body: {
         'connection_status': isConnected.toString(),
@@ -93,22 +93,22 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
         //connection with api to server - Successful
         var resBodyOfMosqueData = jsonDecode(res.body);
 
-        if (resBodyOfMosqueData['success']) //Successfully Connected Or Disconnected
+        if (resBodyOfMosqueData[
+            'success']) //Successfully Connected Or Disconnected
         {
           setState(() {
             isConnected = !isConnected;
           });
-          if(isConnected){
+          if (isConnected) {
             Fluttertoast.showToast(msg: "Successfully Connected");
-          }else{
+          } else {
             Fluttertoast.showToast(msg: "Successfully Disconnected");
           }
-        }
-        else {
+        } else {
           Fluttertoast.showToast(msg: resBodyOfMosqueData['message']);
         }
-      }else{
-          Fluttertoast.showToast(msg: "Server Not Responding");
+      } else {
+        Fluttertoast.showToast(msg: "Server Not Responding");
       }
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
@@ -244,14 +244,15 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
   @override
   Widget build(BuildContext context) {
     return _currentMosque != null
-        ? Material(color: Colors.grey.shade900,
-          child: ListView(
+        ? Material(
+            color: Colors.grey.shade900,
+            child: ListView(
               padding: const EdgeInsets.all(32),
               children: [
                 //profile image
                 Center(
                     child: ClipOval(
-                  child: Container(
+                      child: Container(
                       width: 200,
                       height: 200,
                       decoration: BoxDecoration(
@@ -268,10 +269,16 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                 ),
 
                 //mosque name and connectors
-                mosqueInfoItemProfile(Icons.mosque, _currentMosque!.mosque_name),
-                const SizedBox(height: 10,),
-                mosqueInfoItemProfile(Icons.connect_without_contact, "${_currentMosque!.connectors} connectors"),
-                const SizedBox(height: 10,),
+                mosqueInfoItemProfile(
+                    Icons.mosque, _currentMosque!.mosque_name),
+                const SizedBox(
+                  height: 10,
+                ),
+                mosqueInfoItemProfile(Icons.connect_without_contact,
+                    "${_currentMosque!.connectors} connectors"),
+                const SizedBox(
+                  height: 10,
+                ),
 
                 //connect button
                 Padding(
@@ -279,8 +286,8 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                      //sending connection states to the database
-                      sendMosqueConnectionStatus();
+                        //sending connection states to the database
+                        sendMosqueConnectionStatus();
                       });
                     },
                     child: AnimatedContainer(
@@ -288,16 +295,22 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                         width: 100,
                         duration: const Duration(milliseconds: 80),
                         decoration: BoxDecoration(
-                            color: isConnected ? Colors.brown[800] : Color(0xffffff),
+                            color: isConnected
+                                ? Colors.brown[800]
+                                : Color(0xffffff),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: isConnected ? Colors.brown : Colors.brown.shade200,)
-                        ),
+                            border: Border.all(
+                              color: isConnected
+                                  ? Colors.brown
+                                  : Colors.brown.shade200,
+                            )),
                         child: Center(
-                            child: Text(isConnected ? 'Disconnect' : 'Connect', style: TextStyle(
-                              fontSize: 25,
-                                color: isConnected ? Colors.white : Colors.brown[50]))
-                        )
-                    ),
+                            child: Text(isConnected ? 'Disconnect' : 'Connect',
+                                style: TextStyle(
+                                    fontSize: 25,
+                                    color: isConnected
+                                        ? Colors.white
+                                        : Colors.brown[50])))),
                   ),
                 ),
 
@@ -307,12 +320,14 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
 
                 _buildPrayerTimeWidgets(),
 
-                mosqueInfoItemProfile(Icons.email, _currentMosque!.mosque_email),
+                mosqueInfoItemProfile(
+                    Icons.email, _currentMosque!.mosque_email),
                 const SizedBox(
                   height: 10,
                 ),
 
-                mosqueInfoItemProfile(Icons.flag, _currentMosque!.mosque_country),
+                mosqueInfoItemProfile(
+                    Icons.flag, _currentMosque!.mosque_country),
                 const SizedBox(
                   height: 10,
                 ),
@@ -332,7 +347,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                     Icons.location_pin, _currentMosque!.mosque_address),
               ],
             ),
-        )
+          )
         : const Center(child: CircularProgressIndicator());
   }
 }
