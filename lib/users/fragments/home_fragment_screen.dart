@@ -69,11 +69,10 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
         backgroundColor: Colors.grey.shade900,
         appBar: AppBar(
           backgroundColor: Colors.brown[900],
-          title: const Center(
-              child: Text(
+          title: const Text(
             "Jadwal",
             style: TextStyle(color: Colors.white70, fontSize: 32),
-          )),
+          ),
         ),
         body: _dataFetched
             ? _mosques.isNotEmpty
@@ -129,6 +128,9 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                 ),
                               ),
                               children: [
+                                const Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),),
+                                Divider(color: Colors.white,),
+                                const SizedBox(height: 10,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [

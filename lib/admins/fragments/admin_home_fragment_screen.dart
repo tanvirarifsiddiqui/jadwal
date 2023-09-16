@@ -34,19 +34,22 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   //image segment
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(32),
-      children: [
-        Center(
-          child: Image.asset("images/mosque.png", width: 240,),
-        ),
+    return Material(
+      color: Colors.grey.shade900,
+      child: ListView(
+        padding: const EdgeInsets.all(32),
+        children: [
+          Center(
+            child: Image.asset("images/mosque.png", width: 240,),
+          ),
 
-        const SizedBox(height: 20,),
-        _dataFetched
-            ? _buildPrayerTimeWidgets() // Build prayer time widgets if data is fetched
-            : const Center(child: CircularProgressIndicator()), // Show loading indicator while fetching data
+          const SizedBox(height: 20,),
+          _dataFetched
+              ? _buildPrayerTimeWidgets() // Build prayer time widgets if data is fetched
+              : const Center(child: CircularProgressIndicator()), // Show loading indicator while fetching data
 
-      ],
+        ],
+      ),
     );
   }
 
@@ -100,17 +103,20 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
 Widget _buildPrayerTimeWidgets(){
     return Column(
       children: [
-
+        const Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),),
+        const Divider(color: Colors.white,),
+        const SizedBox(height: 10,),
         //1st Tow Segments
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-
             //Fajr Time Segment
             Flexible(child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.brown[400],
+                color: Colors.brown[300],
+
+
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -123,21 +129,21 @@ Widget _buildPrayerTimeWidgets(){
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   Text(
                     // prayerTime.value,
                     "${_currentMosque.mosque.fajr.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.fajr.minute.toString().padLeft(2,"0")}",
                     style: const TextStyle(
                       fontSize: 42,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white70),
+                    icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
                       _currentMosque.mosque.fajr = await timeController("fajr",_currentMosque.mosque.fajr);
 
@@ -157,7 +163,7 @@ Widget _buildPrayerTimeWidgets(){
             Flexible(child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.brown[400],
+                color: Colors.brown[300],
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -170,21 +176,21 @@ Widget _buildPrayerTimeWidgets(){
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   Text(
                     // prayerTime.value,
                     "${_currentMosque.mosque.zuhr.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.zuhr.minute.toString().padLeft(2,"0")}",
                     style: const TextStyle(
                       fontSize: 42,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white70),
+                    icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
                       _currentMosque.mosque.zuhr = await timeController("zuhr",_currentMosque.mosque.zuhr);
 
@@ -212,7 +218,7 @@ Widget _buildPrayerTimeWidgets(){
             Flexible(child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.brown[400],
+                color: Colors.brown[300],
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -225,21 +231,21 @@ Widget _buildPrayerTimeWidgets(){
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   Text(
                     // prayerTime.value,
                     "${_currentMosque.mosque.asr.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.asr.minute.toString().padLeft(2,"0")}",
                     style: const TextStyle(
                       fontSize: 42,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white70),
+                    icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
                       _currentMosque.mosque.asr = await timeController("asr",_currentMosque.mosque.asr);
 
@@ -259,7 +265,7 @@ Widget _buildPrayerTimeWidgets(){
             Flexible(child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.brown[400],
+                color: Colors.brown[300],
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -272,21 +278,21 @@ Widget _buildPrayerTimeWidgets(){
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   Text(
                     // prayerTime.value,
                     "${_currentMosque.mosque.maghrib.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.maghrib.minute.toString().padLeft(2,"0")}",
                     style: const TextStyle(
                       fontSize: 42,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white70),
+                    icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
                       _currentMosque.mosque.maghrib = await timeController("maghrib",_currentMosque.mosque.maghrib);
 
@@ -313,7 +319,7 @@ Widget _buildPrayerTimeWidgets(){
             Flexible(child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.brown[400],
+                color: Colors.brown[300],
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -326,21 +332,21 @@ Widget _buildPrayerTimeWidgets(){
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   Text(
                     // prayerTime.value,
                     "${_currentMosque.mosque.isha.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.isha.minute.toString().padLeft(2,"0")}",
                     style: const TextStyle(
                       fontSize: 42,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white70),
+                    icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
                       _currentMosque.mosque.isha = await timeController("isha",_currentMosque.mosque.isha);
 
@@ -360,7 +366,7 @@ Widget _buildPrayerTimeWidgets(){
             Flexible(child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.brown[400],
+                color: Colors.brown[300],
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -373,21 +379,21 @@ Widget _buildPrayerTimeWidgets(){
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   Text(
                     // prayerTime.value,
                     "${_currentMosque.mosque.jumuah.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.jumuah.minute.toString().padLeft(2,"0")}",
                     style: const TextStyle(
                       fontSize: 42,
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.white,),
+                  const Divider(color: Colors.black,),
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white70),
+                    icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
                       _currentMosque.mosque.jumuah = await timeController("jumuah",_currentMosque.mosque.jumuah);
 

@@ -98,6 +98,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
         {
           setState(() {
             isConnected = !isConnected;
+            getMosqueInfo();
           });
           if (isConnected) {
             Fluttertoast.showToast(msg: "Successfully Connected");
@@ -245,7 +246,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
   Widget build(BuildContext context) {
     return _currentMosque != null
         ? Material(
-            color: Colors.grey.shade900,
+            color: Colors.brown.shade800,
             child: ListView(
               padding: const EdgeInsets.all(32),
               children: [
@@ -296,7 +297,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                         duration: const Duration(milliseconds: 80),
                         decoration: BoxDecoration(
                             color: isConnected
-                                ? Colors.brown[800]
+                                ? Colors.brown[900]
                                 : Color(0xffffff),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
@@ -317,7 +318,9 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                 const SizedBox(
                   height: 10,
                 ),
-
+                const Center(child: Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),)),
+                const Divider(color: Colors.white,),
+                const SizedBox(height: 10,),
                 _buildPrayerTimeWidgets(),
 
                 mosqueInfoItemProfile(

@@ -46,8 +46,6 @@ class UsersServerOperation{
           mosques = mosqueList.map((mosqueData) {
             return MosqueUserHome.fromJson(mosqueData);
           }).toList();
-        } else {
-          Fluttertoast.showToast(msg: "Failed to fetch mosques for home screen");
         }
       }
     } catch (e) {
