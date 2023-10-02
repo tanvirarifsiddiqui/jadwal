@@ -23,6 +23,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
     _fetchUserMosqueInfo();
   }
 
+  //fetching mosque information to check data is fetched or not
   Future<void> _fetchUserMosqueInfo() async {
     await _currentUser
         .getUserInfo(); // Fetch the prayer times from the database

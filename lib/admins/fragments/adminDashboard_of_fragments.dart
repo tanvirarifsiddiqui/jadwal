@@ -4,7 +4,7 @@ import 'package:jadwal/admins/adminPreferences/current_admin.dart';
 import 'package:jadwal/admins/fragments/admin_home_fragment_screen.dart';
 import 'package:jadwal/admins/fragments/mosque_fragment_screen.dart';
 import 'package:jadwal/admins/fragments/admin_notification_fragment_screen.dart';
-import 'package:jadwal/admins/fragments/admin_operation_fragment_screen.dart';
+import 'package:jadwal/admins/fragments/admin_announcement_fragment_screen.dart';
 import 'package:jadwal/admins/fragments/admin_profile_fragment_screen.dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
 
@@ -15,7 +15,7 @@ class AdminDashboardOfFragments extends StatelessWidget {
 
   final List<Widget> _fragmentScreens = [
     AdminHomeFragmentScreen(),
-    AdminOperationFragmentScreen(),
+    AdminAnnouncementFragmentScreen(),
     MosqueFragmentScreen(),
     AdminNotificationFragmentScreen(),
     AdminProfileFragmentScreen()
@@ -29,9 +29,9 @@ class AdminDashboardOfFragments extends StatelessWidget {
     },
 
     {
-      "active_icon": Icons.table_view,
-      "non_active_icon": Icons.table_view_outlined,
-      "label": "Operation"
+      "active_icon": Icons.message,
+      "non_active_icon": Icons.message_outlined,
+      "label": "Message"
     },
 
     {
