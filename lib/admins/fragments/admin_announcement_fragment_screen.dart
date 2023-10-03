@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/admins/adminPreferences/current_admin.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
 import '../../controllers/announcement_fetch_and_save.dart';
-import '../../widgets/message/announcement_model.dart';
 import '../../widgets/message/sender_row_view.dart';
 import '../../widgets/message/global_members.dart';
+import 'package:http/http.dart' as http;
+
 
 
 const urlTwo =
@@ -35,9 +39,6 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
     super.initState();
     _setGlobalMember();
     _fetchAnnouncements();
-    setState(() {
-      _dataFetched = true;
-    }); // Trigger a rebuild after fetching the data
   }
 
   //mosques list
@@ -47,15 +48,42 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
   }
 
   Future<void> _fetchAnnouncements() async {
-    if (announcements.isEmpty) {
       //fetching country list
       await AnnouncementOperation.fetchAnnouncements(
               currentAdmin.admin.mosque_id)
           .then((announcementList) {
         setState(() {
           announcements = announcementList;
+          _dataFetched = true;
         });
       }).catchError((error) {});
+  }
+  Future<void> _sendAnnouncement() async {
+    try {
+      final res = await http.post(
+        Uri.parse(API.sendAnnouncements),
+        body: {
+          'admin_id' : currentAdmin.admin.admin_id.toString(),
+          'announcement_text' : controller.text,
+          'announcement_date' : DateTime.now().toString(),
+        },
+      );
+      //fetching mosque data
+      if (res.statusCode == 200) {
+        var data = jsonDecode(res.body);
+        if (data['success']) {
+          Fluttertoast.showToast(msg: "Successfully Sent Announcement");
+          setState(() {
+          _fetchAnnouncements();
+          animateList();
+          });
+        }
+      } else {
+        Fluttertoast.showToast(msg: "Failed to send Announcement");
+      }
+
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
     }
   }
 
@@ -176,18 +204,8 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // final newAnnouncement = AnnouncementModel(
-                          //   adminId: currentAdmin.admin.admin_id,
-                          //   adminName: currentAdmin.admin.admin_name,
-                          //   adminImage: currentAdmin.admin.admin_image,
-                          //   announcementText: controller.text,
-                          //   announcementDate: DateTime
-                          //       .now(), // Set the announcement date to the current timestamp
-                          // );
                           setState(() {
-                          AnnouncementOperation.sendAnnouncement(currentAdmin.admin.admin_id, controller.text);
-                            // announcements.add(newAnnouncement);
-                            animateList();
+                          _sendAnnouncement();
                             controller.clear();
                           });
                         },
