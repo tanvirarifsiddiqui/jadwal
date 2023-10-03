@@ -38,16 +38,13 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
         var resBodyOfLogin = jsonDecode(res.body);
         if(resBodyOfLogin['success']){
           Admin adminInfo = Admin.fromJson(resBodyOfLogin["adminData"]); //collecting admin data as json format and save as an admin class
-          print(resBodyOfLogin["mosqueData"]);
           Mosque mosqueInfo = Mosque.fromJson(resBodyOfLogin["mosqueData"]); //collecting mosque data as json format and save as an mosque class
           Fluttertoast.showToast(msg: "You are successfully logged in as as Admin");
 
           //save admin info to local Storage using Shared Preferences
           await RememberAdminPrefs.storeAdminInfo(adminInfo);
-          print(resBodyOfLogin["adminData"]);
           //save mosque info to local Storage using Shared Preferences
           await RememberMosquePrefs.storeMosqueInfo(mosqueInfo);
-          print(resBodyOfLogin["mosqueData"]);
 
           Future.delayed(const Duration(microseconds: 200),(){
             Get.offAll(AdminDashboardOfFragments());

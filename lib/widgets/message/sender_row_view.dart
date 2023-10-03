@@ -37,7 +37,7 @@ class SenderRowView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end, // Align to the right
       children: [
         Padding(
-          padding: const EdgeInsets.only(right: 80, top: 15),
+          padding: const EdgeInsets.only(right: 75),
           child: Text(
             announcement.adminName, // Show admin's name above the message
             style: const TextStyle(
@@ -68,7 +68,7 @@ class SenderRowView extends StatelessWidget {
             ],
           ),
           subtitle: Padding(
-            padding: const EdgeInsets.only(right: 8, top: 4),
+            padding: const EdgeInsets.only(left: 8, top: 4, bottom: 15),
             child: Text(
               '$dateLabel at $formattedTime', // Include date label and formatted time
               textAlign: TextAlign.right,

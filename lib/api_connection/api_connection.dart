@@ -22,6 +22,7 @@ class API{
   //announcements
   static const getAnnouncements = "$hostConnect/announcements/get_announcements.php";
   static const sendAnnouncements = "$hostConnect/announcements/send_announcement.php";
+  static const getUserChatMosqueData = "$hostConnect/announcements/get_user_chat_Mosque_data.php";
 
   //mosque registration
   static const validateMosqueEmail = "$hostConnect/mosque/validate_email.php";

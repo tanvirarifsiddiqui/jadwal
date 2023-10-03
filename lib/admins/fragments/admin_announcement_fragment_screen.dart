@@ -11,13 +11,6 @@ import '../../widgets/message/sender_row_view.dart';
 import '../../widgets/message/global_members.dart';
 import 'package:http/http.dart' as http;
 
-
-
-const urlTwo =
-    'https://sguru.org/wp-content/uploads/2017/03/cute-n-stylish-boys-fb-dp-2016.jpg';
-const url =
-    'https://sguru.org/wp-content/uploads/2017/03/cute-n-stylish-boys-fb-dp-2016.jpg';
-
 class AdminAnnouncementFragmentScreen extends StatefulWidget {
   const AdminAnnouncementFragmentScreen({Key? key}) : super(key: key);
 
@@ -31,7 +24,6 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
 
   var controller = TextEditingController();
   var scrollController = ScrollController();
-  var message = '';
   String title = "Mosque name";
   bool _dataFetched = false;
   @override
@@ -64,6 +56,7 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
         Uri.parse(API.sendAnnouncements),
         body: {
           'admin_id' : currentAdmin.admin.admin_id.toString(),
+          'mosque_id' : currentMosque.mosque.mosque_id.toString(),
           'announcement_text' : controller.text,
           'announcement_date' : DateTime.now().toString(),
         },
@@ -205,8 +198,10 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                       GestureDetector(
                         onTap: () {
                           setState(() {
+                            if(controller.text.isNotEmpty){
                           _sendAnnouncement();
                             controller.clear();
+                            }
                           });
                         },
                         // onLongPress: () {

@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:http/http.dart' as http;
 import 'package:jadwal/mosques/model/search_mosque_model.dart';
+import 'package:jadwal/mosques/model/user_announcement_mosque_model.dart';
 import 'package:jadwal/mosques/model/user_home_mosque_model.dart';
 
 class UsersServerOperation{
@@ -50,6 +51,31 @@ class UsersServerOperation{
       }
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
+    }
+    return mosques;
+  }
+
+  static Future<List<MosqueChatModel>> fetchMosquesForAnnouncement(int userId) async {
+    List<MosqueChatModel> mosques = [];
+    try {
+      var res = await http.post(Uri.parse(API.getUserChatMosqueData),body: {
+        'user_id': userId.toString()
+      });
+      //fetching mosque data
+      if (res.statusCode == 200) {
+        print(res.body);
+        var data = jsonDecode(res.body);
+        if (data['success']) {
+          // Parse the list of mosques
+          List<dynamic> mosqueList = data['mosques'];
+          mosques = mosqueList.map((mosqueData) {
+            return MosqueChatModel.fromJson(mosqueData);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+      print(e.toString());
     }
     return mosques;
   }

@@ -39,7 +39,6 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
 
   Future<void> _fetchConnectedMosqueInfo() async {
     if (_mosques.isEmpty) {
-      //fetching country list
       await UsersServerOperation.fetchMosquesForHome(_currentUser.user.user_id)
           .then((mosqueList) {
         setState(() {
