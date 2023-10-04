@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:jadwal/admins/adminPreferences/current_admin.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
+import 'package:jadwal/widgets/message/announcement_model.dart';
 import '../../controllers/announcement_fetch_and_save.dart';
 import '../../widgets/message/sender_row_view.dart';
 import '../../widgets/message/global_members.dart';
@@ -27,10 +28,12 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
   bool _dataFetched = false;
   int currentPage = 1; // Track the current page of messages
   bool isLoadingMore = false;
+  late String announcementText;//solved the problem of showing the new announcements in a real-time
+
   @override
   void initState() {
     super.initState();
-    mosqueAnnouncements[currentMosque.mosque.mosque_id]?.clear();
+    announcements.clear();
     _setGlobalMember();
     _fetchAnnouncements();
     _setupScrollListener();
@@ -38,41 +41,53 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
 
   //mosques list
   // List<AnnouncementModel> _announcements = [];
-  Future<void> _setGlobalMember() async {
-    mosqueImageUrl = "${API.mosqueImage}${currentMosque.mosque.mosque_image}";
+  Future<void> _setGlobalMember() async{
+     mosqueImageUrl = "${API.mosqueImage}${currentMosque.mosque.mosque_image}";
   }
 
   Future<void> _fetchAnnouncements() async {
     //fetch messages for current page
-    final mosqueId = currentMosque.mosque.mosque_id;
-    final announcementsForMosque = mosqueAnnouncements[mosqueId] ?? [];
-    await AnnouncementOperation.fetchAnnouncements(currentAdmin.admin.mosque_id,
-            page: currentPage)
-        .then((announcementList) {
-      setState(() {
-        // Append the new messages to the existing list for this mosque
-        announcementsForMosque.addAll(announcementList);
-        mosqueAnnouncements[mosqueId] = announcementsForMosque;
-        _dataFetched = true;
-      });
-    }).catchError((error) {});
+    final announcementsForMosque = announcements;
+      await AnnouncementOperation.fetchAnnouncements(
+              currentAdmin.admin.mosque_id, page: currentPage)
+          .then((announcementList) {
+        setState(() {
+          announcementsForMosque.addAll(announcementList);
+          announcements = announcementsForMosque;
+          _dataFetched = true;
+        });
+      }).catchError((error) {});
   }
-
   Future<void> _sendAnnouncement() async {
     try {
       final res = await http.post(
         Uri.parse(API.sendAnnouncements),
         body: {
-          'admin_id': currentAdmin.admin.admin_id.toString(),
-          'mosque_id': currentMosque.mosque.mosque_id.toString(),
-          'announcement_text': controller.text,
-          'announcement_date': DateTime.now().toString(),
+          'admin_id' : currentAdmin.admin.admin_id.toString(),
+          'mosque_id' : currentMosque.mosque.mosque_id.toString(),
+          'announcement_text' : controller.text,
+          'announcement_date' : DateTime.now().toString(),
         },
       );
       //fetching mosque data
       if (res.statusCode == 200) {
         var data = jsonDecode(res.body);
         if (data['success']) {
+          // Create the new AnnouncementModel
+          AnnouncementModel newAnnouncement = AnnouncementModel(
+            announcementId: 0,
+            announcementDate: DateTime.now(),
+            adminId: currentAdmin.admin.admin_id,
+            adminName: currentAdmin.admin.admin_name,
+            adminImage: currentAdmin.admin.admin_image,
+            announcementText: announcementText,
+          );
+          // Add the new announcement to the list
+          setState(() {
+            announcements.insert(0, newAnnouncement); // Insert at the beginning for reverse order
+            animateList();
+          });
+
           Fluttertoast.showToast(msg: "Successfully Sent Announcement");
         }
       } else {
@@ -84,10 +99,10 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
   }
 
   void animateList() {
-    scrollController.jumpTo(scrollController.position.maxScrollExtent);
+    scrollController.jumpTo(scrollController.position.minScrollExtent);
     Future.delayed(const Duration(milliseconds: 100), () {
       if (scrollController.offset !=
-          scrollController.position.maxScrollExtent) {
+          scrollController.position.minScrollExtent) {
         animateList();
       }
     });
@@ -137,15 +152,14 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
             final mosqueName = currentMosque.mosque.mosque_name;
             final imageWidget = Uri.tryParse(mosqueImageUrl) != null
                 ? CircleAvatar(
-                    backgroundImage: NetworkImage(mosqueImageUrl),
-                  )
+              backgroundImage: NetworkImage(mosqueImageUrl),
+            )
                 : const CircleAvatar();
             return ListTile(
               leading: imageWidget,
               title: Text(
                 mosqueName,
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
               subtitle: const Text(
                 'online',
@@ -175,9 +189,7 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                 Flexible(
                     flex: 1,
                     fit: FlexFit.tight,
-                    child: mosqueAnnouncements[currentMosque.mosque.mosque_id]
-                                ?.isEmpty ??
-                            true
+                    child: announcements.isEmpty
                         ? const Center(
                             child: Text("No Announcements Found"),
                           )
@@ -185,17 +197,10 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                             reverse: true,
                             controller: scrollController,
                             physics: const BouncingScrollPhysics(),
-                            itemCount: mosqueAnnouncements[
-                                        currentMosque.mosque.mosque_id]
-                                    ?.length ??
-                                0,
-                            itemBuilder: (context, index) {
-                              return SenderRowView(
-                                index: index,
-                                mosqueId: currentMosque.mosque.mosque_id,
-                              );
-                            },
-                          )),
+                            itemCount: announcements.length,
+                            itemBuilder: (context, index) => SenderRowView(
+                                  index: index,
+                                ))),
                 Container(
                   alignment: Alignment.center,
                   color: Colors.white,
@@ -238,11 +243,11 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
+                          announcementText = controller.text;
                           setState(() {
-                            if (controller.text.isNotEmpty) {
-                              _sendAnnouncement();
-                              animateList();
-                              controller.clear();
+                            if(controller.text.isNotEmpty){
+                          _sendAnnouncement();
+                            controller.clear();
                             }
                           });
                         },

@@ -7,7 +7,8 @@ import '../../widgets/message/global_members.dart';
 
 class UserAnnouncementScreen extends StatefulWidget {
   final MosqueChatModel mosque;
-  const UserAnnouncementScreen({required this.mosque, Key? key}) : super(key: key);
+  const UserAnnouncementScreen({required this.mosque, Key? key})
+      : super(key: key);
 
   @override
   MyChatUIState createState() => MyChatUIState();
@@ -54,7 +55,8 @@ class MyChatUIState extends State<UserAnnouncementScreen> {
   void _setupScrollListener() {
     scrollController.addListener(() {
       if (scrollController.position.atEdge && !isLoadingMore) {
-        if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+        if (scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent) {
           // Scrolled to the bottom, load more messages when scrolling up
           setState(() {
             isLoadingMore = true;
@@ -85,8 +87,8 @@ class MyChatUIState extends State<UserAnnouncementScreen> {
             final mosqueName = widget.mosque.mosque_name;
             final imageWidget = Uri.tryParse(mosqueImageUrl) != null
                 ? CircleAvatar(
-              backgroundImage: NetworkImage(mosqueImageUrl),
-            )
+                    backgroundImage: NetworkImage(mosqueImageUrl),
+                  )
                 : const CircleAvatar();
             return ListTile(
               leading: imageWidget,
@@ -105,33 +107,38 @@ class MyChatUIState extends State<UserAnnouncementScreen> {
       ),
       body: _dataFetched
           ? Column(
-        children: [
-          if (isLoadingMore)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
-          Flexible(
-            flex: 1,
-            fit: FlexFit.tight,
-            child: mosqueAnnouncements[widget.mosque.mosque_id]?.isEmpty ?? true
-                ? const Center(
-              child: Text("No Announcements Found"),
+              children: [
+                if (isLoadingMore)
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.tight,
+                  child:
+                      mosqueAnnouncements[widget.mosque.mosque_id]?.isEmpty ??
+                              true
+                          ? const Center(
+                              child: Text("No Announcements Found"),
+                            )
+                          : ListView.builder(
+                              reverse: true, // Reverse the list
+                              controller: scrollController,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount:
+                                  mosqueAnnouncements[widget.mosque.mosque_id]
+                                          ?.length ??
+                                      0,
+                              itemBuilder: (context, index) {
+                                return ReceiverRowView(
+                                  index: index,
+                                  mosqueId: widget.mosque.mosque_id,
+                                );
+                              },
+                            ),
+                ),
+              ],
             )
-                : ListView.builder(
-              reverse: true, // Reverse the list
-              controller: scrollController,
-              physics: const BouncingScrollPhysics(),
-              itemCount: mosqueAnnouncements[widget.mosque.mosque_id]?.length ?? 0,
-              itemBuilder: (context, index) {
-                return ReceiverRowView(
-                  index: index,
-                  mosqueId: widget.mosque.mosque_id,
-                );
-              },
-            ),
-          ),
-        ],
-      )
           : const Center(child: CircularProgressIndicator()),
     );
   }

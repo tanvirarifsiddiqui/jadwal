@@ -33,30 +33,4 @@ class AnnouncementOperation{
   }
 
 
-  //send Announcement
-  static sendAnnouncement(int adminId, String announcementText) async {
-    try {
-      final res = await http.post(
-        Uri.parse(API.sendAnnouncements),
-        body: {
-            'admin_id' : adminId.toString(),
-            'announcement_text' : announcementText,
-        },
-      );
-      //fetching mosque data
-      if (res.statusCode == 200) {
-        var data = jsonDecode(res.body);
-        if (data['success']) {
-          Fluttertoast.showToast(msg: "Successfully Sent Announcement");
-        }
-      } else {
-        Fluttertoast.showToast(msg: "Failed to send Announcement");
-      }
-
-    } catch (e) {
-      Fluttertoast.showToast(msg: e.toString());
-    }
-  }
-
-
 }
