@@ -63,7 +63,6 @@ class UsersServerOperation{
       });
       //fetching mosque data
       if (res.statusCode == 200) {
-        print(res.body);
         var data = jsonDecode(res.body);
         if (data['success']) {
           // Parse the list of mosques
@@ -75,7 +74,6 @@ class UsersServerOperation{
       }
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
-      print(e.toString());
     }
     return mosques;
   }

@@ -7,18 +7,19 @@ import 'package:jadwal/widgets/message/announcement_model.dart';
 class AnnouncementOperation{
 
 //Function to fetch Mosques for user Home Screen
-  static Future<List<AnnouncementModel>> fetchAnnouncements(int mosqueId) async {
+  static Future<List<AnnouncementModel>> fetchAnnouncements(int mosqueId, {int page = 1}) async {
     List<AnnouncementModel> announcements = [];
     try {
-      var res = await http.post(Uri.parse(API.getAnnouncements),body: {
-        'mosque_id': mosqueId.toString()
+      var res = await http.post(Uri.parse(API.getAnnouncements), body: {
+        'mosque_id': mosqueId.toString(),
+        'page': page.toString(), // Include the page parameter
       });
-      //fetching mosque data
+      // Fetching mosque data
       if (res.statusCode == 200) {
         var data = jsonDecode(res.body);
 
         if (data['success']) {
-          // Parse the list of mosques
+          // Parse the list of announcements
           List<dynamic> announcementList = data['announcements'];
           announcements = announcementList.map((announcementData) {
             return AnnouncementModel.fromJson(announcementData);
@@ -30,6 +31,7 @@ class AnnouncementOperation{
     }
     return announcements;
   }
+
 
   //send Announcement
   static sendAnnouncement(int adminId, String announcementText) async {
@@ -43,7 +45,6 @@ class AnnouncementOperation{
       );
       //fetching mosque data
       if (res.statusCode == 200) {
-        print(res.body);
         var data = jsonDecode(res.body);
         if (data['success']) {
           Fluttertoast.showToast(msg: "Successfully Sent Announcement");

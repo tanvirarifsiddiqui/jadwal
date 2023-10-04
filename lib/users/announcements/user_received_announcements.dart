@@ -14,35 +14,63 @@ class UserAnnouncementScreen extends StatefulWidget {
 }
 
 class MyChatUIState extends State<UserAnnouncementScreen> {
-
   var controller = TextEditingController();
   var scrollController = ScrollController();
   bool _dataFetched = false;
+  int currentPage = 1; // Track the current page of messages
+  bool isLoadingMore = false; // Track whether more messages are being loaded
+
   @override
   void initState() {
     super.initState();
+    mosqueAnnouncements[widget.mosque.mosque_id]?.clear();
     _setGlobalMember();
     _fetchAnnouncements();
+    _setupScrollListener();
   }
 
-  //mosques list
-  // List<AnnouncementModel> _announcements = [];
-  Future<void> _setGlobalMember() async{
+  Future<void> _setGlobalMember() async {
     mosqueImageUrl = "${API.mosqueImage}${widget.mosque.mosque_image}";
   }
 
   Future<void> _fetchAnnouncements() async {
-    //fetching country list
+    // Fetch messages for the current page
+    final mosqueId = widget.mosque.mosque_id;
+    final announcementsForMosque = mosqueAnnouncements[mosqueId] ?? [];
     await AnnouncementOperation.fetchAnnouncements(
-        widget.mosque.mosque_id)
-        .then((announcementList) {
+      widget.mosque.mosque_id,
+      page: currentPage,
+    ).then((announcementList) {
       setState(() {
-        announcements = announcementList;
+        // Append the new messages to the existing list for this mosque
+        announcementsForMosque.addAll(announcementList);
+        mosqueAnnouncements[mosqueId] = announcementsForMosque;
         _dataFetched = true;
       });
     }).catchError((error) {});
   }
 
+  // Set up a scroll listener to load more messages when scrolling to the top
+  void _setupScrollListener() {
+    scrollController.addListener(() {
+      if (scrollController.position.atEdge && !isLoadingMore) {
+        if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+          // Scrolled to the bottom, load more messages when scrolling up
+          setState(() {
+            isLoadingMore = true;
+          });
+
+          // Load messages for the next page
+          currentPage++;
+          _fetchAnnouncements().whenComplete(() {
+            setState(() {
+              isLoadingMore = false;
+            });
+          });
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +80,6 @@ class MyChatUIState extends State<UserAnnouncementScreen> {
         elevation: 12,
         titleSpacing: 10,
         backgroundColor: const Color(0xff2b0c0d),
-        // leading: const Padding(
-        //   padding: EdgeInsets.all(8.0),
-        //   child: Icon(
-        //     Icons.arrow_back_ios_sharp,
-        //     color: Colors.white,
-        //   ),
-        // ),
-        // leadingWidth: 20,todo copy it for user fragment
         title: Builder(
           builder: (BuildContext context) {
             final mosqueName = widget.mosque.mosque_name;
@@ -72,7 +92,8 @@ class MyChatUIState extends State<UserAnnouncementScreen> {
               leading: imageWidget,
               title: Text(
                 mosqueName,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
               ),
               subtitle: const Text(
                 'online',
@@ -81,34 +102,34 @@ class MyChatUIState extends State<UserAnnouncementScreen> {
             );
           },
         ),
-        // actions: const [
-        //   Padding(
-        //     padding: EdgeInsets.only(right: 20),
-        //     child: Icon(Icons.videocam_rounded),
-        //   ),
-        //   Padding(
-        //     padding: EdgeInsets.only(right: 20),
-        //     child: Icon(Icons.call),
-        //   ),
-        // ],todo kaj jene rakho
       ),
       body: _dataFetched
           ? Column(
         children: [
+          if (isLoadingMore)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
           Flexible(
-              flex: 1,
-              fit: FlexFit.tight,
-              child: announcements.isEmpty
-                  ? const Center(
-                child: Text("No Announcements Found"),
-              )
-                  : ListView.builder(
-                  controller: scrollController,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: announcements.length,
-                  itemBuilder: (context, index) => ReceiverRowView(
-                    index: index,
-                  ))),
+            flex: 1,
+            fit: FlexFit.tight,
+            child: mosqueAnnouncements[widget.mosque.mosque_id]?.isEmpty ?? true
+                ? const Center(
+              child: Text("No Announcements Found"),
+            )
+                : ListView.builder(
+              reverse: true, // Reverse the list
+              controller: scrollController,
+              physics: const BouncingScrollPhysics(),
+              itemCount: mosqueAnnouncements[widget.mosque.mosque_id]?.length ?? 0,
+              itemBuilder: (context, index) {
+                return ReceiverRowView(
+                  index: index,
+                  mosqueId: widget.mosque.mosque_id,
+                );
+              },
+            ),
+          ),
         ],
       )
           : const Center(child: CircularProgressIndicator()),

@@ -4,13 +4,14 @@ import 'global_members.dart';
 import 'package:intl/intl.dart'; // Import the intl package for time formatting
 
 class ReceiverRowView extends StatelessWidget {
-  const ReceiverRowView({Key? key, required this.index}) : super(key: key);
+  const ReceiverRowView({Key? key, required this.index, required this.mosqueId}) : super(key: key);
 
   final int index;
+  final int mosqueId;
 
   @override
   Widget build(BuildContext context) {
-    final announcement = announcements.elementAt(index);
+    final announcement = mosqueAnnouncements[mosqueId]![index]; // Get the announcement from mosqueAnnouncements
 
     // Format the time using intl package
     final formattedTime = DateFormat.jm().format(announcement.announcementDate!);
