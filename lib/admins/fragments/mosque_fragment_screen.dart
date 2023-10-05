@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:jadwal/admins/authentication/signup_screen_from_admin.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
+import 'package:jadwal/widgets/qr_section/mosque_generated_QR.dart';
 
 class MosqueFragmentScreen extends StatelessWidget {
   Widget mosqueInfoItemProfile(IconData iconData, String adminData) {
@@ -62,6 +63,33 @@ class MosqueFragmentScreen extends StatelessWidget {
               )
           ),
 
+          const SizedBox(height: 20,),
+
+          Center(
+            child: Material(
+              color: Colors.amber[700],
+              borderRadius: BorderRadius.circular(8),
+              child: InkWell(
+                onTap: (){
+                  Get.to(QRMosqueGenerated(mosqueId: _currentMosque.mosque.mosque_id));
+                },
+                borderRadius: BorderRadius.circular(32),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 12
+                  ),
+                  child: Text(
+                    "Get QR Code",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: 20,),
 
           mosqueInfoItemProfile(Icons.mosque, _currentMosque.mosque.mosque_name),

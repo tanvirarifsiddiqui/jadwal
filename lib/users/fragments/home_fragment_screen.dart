@@ -6,6 +6,7 @@ import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/model/user_home_mosque_model.dart';
 import 'package:jadwal/mosques/profile/user_mosque_profile.dart';
 import 'package:jadwal/users/userPreferences/current_user.dart';
+import 'package:jadwal/widgets/qr_section/user_qr_scan.dart';
 
 import '../../controllers/users_fetch_info.dart';
 
@@ -73,6 +74,20 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
             "Jadwal",
             style: TextStyle(color: Colors.white70, fontSize: 32),
           ),
+          actions: [
+            IconButton(
+                onPressed:(){
+                  print('Pressed Search button');
+                },
+                icon: const Icon(Icons.search_outlined,)
+            ),
+            IconButton(
+                onPressed:(){
+                  Get.to(()=>QRScanner());
+                },
+                icon: const Icon(Icons.qr_code_scanner,)
+            ),
+          ],
         ),
         body: _dataFetched
             ? _mosques.isNotEmpty

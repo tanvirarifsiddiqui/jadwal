@@ -87,8 +87,6 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
             announcements.insert(0, newAnnouncement); // Insert at the beginning for reverse order
             animateList();
           });
-
-          Fluttertoast.showToast(msg: "Successfully Sent Announcement");
         }
       } else {
         Fluttertoast.showToast(msg: "Failed to send Announcement");
