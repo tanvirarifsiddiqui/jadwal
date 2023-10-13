@@ -104,13 +104,15 @@ class AdminProfileFragmentScreen extends StatelessWidget {
       )
     );
     if(resultResponse == "loggedOut"){
-      //delete mosque data from local storage
-      await RememberMosquePrefs.removeMosqueInfo();
-
+      //delete mosque data from local storage*
+      RememberMosquePrefs.removeMosqueInfo().then((value) {
       //delete admin data from local storage
-      RememberAdminPrefs.removeAdminInfo().then((value){
-        Get.offAll(AdminLoginScreen());
+        RememberAdminPrefs.removeAdminInfo().then((value){
+          Get.offAll(AdminLoginScreen());
+        });
       });
+
+
     }
   }
 

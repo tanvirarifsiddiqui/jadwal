@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/model/user_home_mosque_model.dart';
 import 'package:jadwal/mosques/profile/user_mosque_profile.dart';
+import 'package:jadwal/users/searches/search_mosque.dart';
 import 'package:jadwal/users/userPreferences/current_user.dart';
 import 'package:jadwal/widgets/qr_section/user_qr_scan.dart';
 
@@ -77,7 +78,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
           actions: [
             IconButton(
                 onPressed:(){
-                  print('Pressed Search button');
+                  Get.to(()=>SearchMosqueScreen());
                 },
                 icon: const Icon(Icons.search_outlined,)
             ),

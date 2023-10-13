@@ -46,8 +46,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
           //save mosque info to local Storage using Shared Preferences
           await RememberMosquePrefs.storeMosqueInfo(mosqueInfo);
 
-          Future.delayed(const Duration(microseconds: 200),(){
-            Get.offAll(AdminDashboardOfFragments());
+          Future.delayed(const Duration(microseconds: 2000),(){
+            Get.offAll(()=> AdminDashboardOfFragments());
           });
 
         }

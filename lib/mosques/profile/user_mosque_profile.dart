@@ -67,13 +67,17 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
         //connection with api to server - Successful
         var resBodyOfMosqueData = jsonDecode(res.body);
 
-        if (resBodyOfMosqueData[
-            'success']) //Successfully Connected Or Disconnected
+        if (resBodyOfMosqueData['success']) //Successfully Connected Or Disconnected
         {
+          setState(() {
           isConnected = true;
+          });
         } else {
+          setState(() {
           isConnected = false;
+          });
         }
+
       } else {
         Fluttertoast.showToast(msg: "Server Not Responding");
       }

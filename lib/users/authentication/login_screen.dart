@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await RememberUserPrefs.storeUserInfo(userInfo);
 
           Future.delayed(const Duration(microseconds: 2000),(){
-            Get.off(DashboardOfFragments());
+            Get.offAll(()=>DashboardOfFragments());
           });
 
         }

@@ -87,12 +87,11 @@ class _QRScannerState extends State<QRScanner> {
   );
 
   void onQRViewCreated(QRViewController controller){
-    setState(() => this.controller= controller);
+    (() => this.controller= controller);
 
-    controller.scannedDataStream.listen((barcode)=> setState(() {
+    controller.scannedDataStream.listen((barcode) {
       Get.to(()=>UserMosqueProfile(mosqueId: int.parse(barcode.code.toString())));
-    }));
-
+    });
   }
 
 
