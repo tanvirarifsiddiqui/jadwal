@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:jadwal/admins/adminPreferences/current_admin.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
 import 'package:jadwal/mosques/mosquePreferences/mosquePreferences.dart';
@@ -14,6 +15,7 @@ class AdminHomeFragmentScreen extends StatefulWidget {
 
 class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   final CurrentMosque _currentMosque = Get.put(CurrentMosque());
+  final CurrentAdmin _currentAdmin = Get.put(CurrentAdmin());
 
   bool _dataFetched = false; // Track if data has been fetched
 
@@ -81,6 +83,9 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
       var res = await http.post(Uri.parse(API.updateMosqueTime),
           body: {
             "mosque_id":_currentMosque.mosque.mosque_id.toString(),
+            "mosque_name": _currentMosque.mosque.mosque_name,
+            "admin_id": _currentAdmin.admin.admin_id.toString(),
+            "admin_name": _currentAdmin.admin.admin_name,
             "prayer_name":prayerName,
             "prayer_time":formatTimeOfDay(prayerTime),
           });
@@ -88,6 +93,7 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
         var resBody = jsonDecode(res.body);
         if(resBody['success']){
           Fluttertoast.showToast(msg: "Time Schedule of $prayerName is Successfully Updated");
+
         }
         else {
           Fluttertoast.showToast(msg: "Server don't responding");

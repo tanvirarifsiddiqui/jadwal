@@ -23,7 +23,7 @@ class QRMosqueGenerated extends StatelessWidget {
                 backgroundColor: Colors.white,
               ),
               const SizedBox(height: 40,),
-              const Text("Scan this QR code to find Desired Mosque",style: TextStyle(color: Colors.white),)
+              const Text("Scan this QR code to find the desired mosque",style: TextStyle(color: Colors.white),)
             ],
           ),
         ),
