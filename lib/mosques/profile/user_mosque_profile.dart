@@ -91,7 +91,8 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
       var res = await http.post(Uri.parse(API.setConnectionStatus), body: {
         'connection_status': isConnected.toString(),
         'mosque_id': widget.mosqueId.toString(),
-        'user_id': _currentUser.user.user_id.toString()
+        'user_id': _currentUser.user.user_id.toString(),
+        'user_name': _currentUser.user.user_name
       });
       if (res.statusCode == 200) {
         //connection with api to server - Successful
