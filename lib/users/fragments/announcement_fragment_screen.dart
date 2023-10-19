@@ -98,7 +98,7 @@ class _AnnouncementFragmentScreenState
         now.day == messageDate.day) {
       dateLabel = 'Today';
     } else {
-      dateLabel = DateFormat('dd MMMM, yy').format(messageDate);
+      dateLabel = DateFormat('dd MMM, yy').format(messageDate);
     }
 
     return Container(
@@ -142,7 +142,7 @@ class _AnnouncementFragmentScreenState
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "${mosque.last_admin_name} : ${mosque.last_announcement_text}",
+                    "${mosque.last_admin_name}: ${mosque.last_announcement_text}",
                     softWrap: true,
                     style: TextStyle(color: Colors.brown[200]),
                   ),
