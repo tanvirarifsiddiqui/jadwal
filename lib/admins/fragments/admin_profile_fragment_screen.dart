@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/admins/adminPreferences/adminPreferences.dart';
@@ -5,6 +7,10 @@ import 'package:jadwal/admins/adminPreferences/current_admin.dart';
 import 'package:jadwal/admins/authentication/login_screen.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/mosquePreferences/mosquePreferences.dart';
+import 'package:http/http.dart' as http;
+
+import '../../controllers/notification_services(class).dart';
+
 
 class AdminProfileFragmentScreen extends StatelessWidget {
 
@@ -33,6 +39,9 @@ class AdminProfileFragmentScreen extends StatelessWidget {
   //     ),
   //   );
   // }
+
+  NotificationServices notificationServices = NotificationServices();
+
   Widget adminInfoItemProfile(IconData iconData, String adminData) {
     return Container(
       decoration: BoxDecoration(
@@ -104,13 +113,25 @@ class AdminProfileFragmentScreen extends StatelessWidget {
       )
     );
     if(resultResponse == "loggedOut"){
-      //delete mosque data from local storage*
-      RememberMosquePrefs.removeMosqueInfo().then((value) {
-      //delete admin data from local storage
-        RememberAdminPrefs.removeAdminInfo().then((value){
-          Get.offAll(AdminLoginScreen());
-        });
+      notificationServices.getDeviceToken().then((value) async {
+        var res = await http.post(Uri.parse(API.deleteAdminToken),
+            body: {
+              "token": value,
+            });
+        if(res.statusCode == 200){ //connection with api to server - Successful
+          var resBody = jsonDecode(res.body);
+          if(resBody['success']){
+            //delete mosque data from local storage*
+            RememberMosquePrefs.removeMosqueInfo().then((value) {
+              //delete admin data from local storage
+              RememberAdminPrefs.removeAdminInfo().then((value){
+                Get.offAll(AdminLoginScreen());
+              });
+            });
+          }
+        }
       });
+
 
 
     }

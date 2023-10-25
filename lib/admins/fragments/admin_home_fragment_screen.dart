@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/admins/adminPreferences/current_admin.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
+import 'package:jadwal/controllers/notification_services(class).dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
 import 'package:jadwal/mosques/mosquePreferences/mosquePreferences.dart';
 import 'package:http/http.dart' as http;
@@ -93,7 +95,8 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
         var resBody = jsonDecode(res.body);
         if(resBody['success']){
           Fluttertoast.showToast(msg: "Time Schedule of $prayerName is Successfully Updated");
-
+          //todo sending notification to user about updated time
+          notifyUserUpdatedTime(prayerName,prayerTime);
         }
         else {
           Fluttertoast.showToast(msg: "Server don't responding");
@@ -103,6 +106,44 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
       Fluttertoast.showToast(msg: e.toString());
     }
   }
+
+  notifyUserUpdatedTime(String prayerName,TimeOfDay prayerTime) async {
+    // send notification from one device to another
+      var data = {
+        'to' : 'djArGsINS5CkA5CbKnN258:APA91bFpRa01ayJqEQ4V1DvMYzVN7-f_mupUyZQ83DXxorhIT20OQs-zA98P-Xcq-1LZKSizQR1qSW_QNyMYKfx9Wh89YfOMDqkQU2PGPIq-sjOhvXa_izPCOWPfkWslCoSHnZQokmbD',
+        'notification' : {
+          'title' : '$prayerName Time Updated' ,
+          'body' : '$prayerName Time Updated to $prayerTime' ,
+          // "sound": "jetsons_doorbell.mp3"
+        },
+        'android': {
+          'notification': {
+            'notification_count': 23,
+          },
+        },
+        'data' : {
+          'type' : 'schedule' ,
+          'id' : 'tanvir'
+        }
+      };
+
+      await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+          body: jsonEncode(data) ,
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization' : 'key=AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1'
+          }
+      ).then((value){
+        if (kDebugMode) {
+          print(value.body.toString());
+        }
+      }).onError((error, stackTrace){
+        if (kDebugMode) {
+          print(error);
+        }
+      });
+  }
+
 
 
 

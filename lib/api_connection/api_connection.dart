@@ -1,5 +1,5 @@
 class API{
-  static const hostConnect = "http://192.168.1.8/api_jadwal";
+  static const hostConnect = "http://192.168.42.146/api_jadwal";
 
   //Api jadwal
   static const hostConnectUser = "$hostConnect/user";
@@ -18,6 +18,8 @@ class API{
   static const setUserHomeMosqueOrder = "$hostConnect/user/user_operation/user_home_mosque_order.php";
   static const getSearchedMosqueData = "$hostConnect/mosque/search_mosque.php";
   static const getUserHomeMosqueData = "$hostConnect/mosque/user_home_mosque.php";
+  static const storeUserToken = "$hostConnect/user/store_user_token.php";
+  static const deleteUserToken = "$hostConnect/user/delete_user_token.php";
 
   //announcements
   static const getAnnouncements = "$hostConnect/announcements/get_announcements.php";
@@ -32,9 +34,11 @@ class API{
   static const getMosqueData = "$hostConnect/mosque/get_data.php";
   static const getMosqueDataById = "$hostConnect/mosque/get_data_by_id.php";
 
-  //mosque operation
+  //admin operation
   static const mosqueImage = "$hostConnect/images/mosque_images/";
   static const updateMosqueTime = "$hostConnect/mosque/update_time.php";
+  static const storeAdminToken = "$hostConnect/admin/store_admin_token.php";
+  static const deleteAdminToken = "$hostConnect/admin/delete_admin_token.php";
 
   //signUP admin
   static const validateAdminEmail = "$hostConnect/admin/validate_email.php";

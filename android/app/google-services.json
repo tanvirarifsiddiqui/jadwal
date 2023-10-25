@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "193104232926",
+    "project_id": "jadwal-89a2e",
+    "storage_bucket": "jadwal-89a2e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193104232926:android:0432274cf94741dfef9d4f",
+        "android_client_info": {
+          "package_name": "com.crescentmoon.jadwal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjNLgVz31wMQVFWvUWs-K_vHDSLG25DrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

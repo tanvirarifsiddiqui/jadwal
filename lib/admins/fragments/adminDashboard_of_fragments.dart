@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/admins/adminPreferences/current_admin.dart';
@@ -7,9 +9,12 @@ import 'package:jadwal/admins/fragments/admin_notification_fragment_screen.dart'
 import 'package:jadwal/admins/fragments/admin_announcement_fragment_screen.dart';
 import 'package:jadwal/admins/fragments/admin_profile_fragment_screen.dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
+import 'package:http/http.dart' as http;
+import '../../api_connection/api_connection.dart';
+import '../../controllers/notification_services(class).dart';
 
 class AdminDashboardOfFragments extends StatelessWidget {
-
+  NotificationServices notificationServices = NotificationServices();
   final CurrentAdmin _rememberCurrentAdmin = Get.put(CurrentAdmin());
   final CurrentMosque _rememberCurrentMosque = Get.put(CurrentMosque());
 
@@ -60,6 +65,24 @@ class AdminDashboardOfFragments extends StatelessWidget {
     return GetBuilder(
       init: CurrentAdmin(),
       initState: (currentState){
+        //for notification
+        notificationServices.requestNotificationPermission();
+        notificationServices.firebaseInit(context);
+        notificationServices.setupInteractMessage(context);
+        //getting and storing admin token for push notification
+        notificationServices.getDeviceToken().then((value) async {
+          var res = await http.post(Uri.parse(API.storeAdminToken),
+              body: {
+                "admin_id": _rememberCurrentAdmin.admin.admin_id.toString(),
+                "token": value,
+              });
+          if(res.statusCode == 200){ //connection with api to server - Successful
+            var resBody = jsonDecode(res.body);
+            if(resBody['success']){
+              print("Successfully stored token");
+            }
+          }
+        });
         _rememberCurrentAdmin.getAdminInfo();
         _rememberCurrentMosque.getMosqueInfo();
       },

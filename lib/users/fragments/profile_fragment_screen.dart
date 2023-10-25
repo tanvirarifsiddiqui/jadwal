@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/users/authentication/login_screen.dart';
 import 'package:jadwal/users/userPreferences/current_user.dart';
 import 'package:jadwal/users/userPreferences/userPreferences.dart';
+import 'package:http/http.dart' as http;
+import '../../controllers/notification_services(class).dart';
+
 
 class ProfileFragmentScreen extends StatelessWidget {
+  NotificationServices notificationServices = NotificationServices();
 
   Widget userInfoItemProfile(IconData iconData, String adminData) {
     return Container(
@@ -79,9 +85,21 @@ class ProfileFragmentScreen extends StatelessWidget {
     );
     if(resultResponse == "loggedOut"){
       //delete user data from local storage
-      RememberUserPrefs.removeUserInfo().then((value){
-        Get.offAll(LoginScreen());
+      notificationServices.getDeviceToken().then((value) async {
+        var res = await http.post(Uri.parse(API.deleteUserToken),
+            body: {
+              "token": value,
+            });
+        if(res.statusCode == 200){ //connection with api to server - Successful
+          var resBody = jsonDecode(res.body);
+          if(resBody['success']){
+            RememberUserPrefs.removeUserInfo().then((value){
+              Get.offAll(LoginScreen());
+            });
+          }
+        }
       });
+
     }
   }
 

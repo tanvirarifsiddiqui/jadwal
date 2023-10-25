@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/users/fragments/announcement_fragment_screen.dart';
@@ -6,10 +8,14 @@ import 'package:jadwal/users/fragments/notification_fragment_screen.dart';
 import 'package:jadwal/users/fragments/profile_fragment_screen.dart';
 import 'package:jadwal/users/fragments/search_fragment_screen.dart';
 import 'package:jadwal/users/userPreferences/current_user.dart';
+import 'package:http/http.dart' as http;
+import '../../api_connection/api_connection.dart';
+import '../../controllers/notification_services(class).dart';
 
 class DashboardOfFragments extends StatelessWidget {
 
   final CurrentUser _rememberCurrentUser = Get.put(CurrentUser());
+  NotificationServices notificationServices = NotificationServices();
 
   final List<Widget> _fragmentScreens = [
     HomeFragmentScreen(),
@@ -60,6 +66,23 @@ class DashboardOfFragments extends StatelessWidget {
     return GetBuilder(
       init: CurrentUser(),
       initState: (currentState){
+        //for notification
+        notificationServices.requestNotificationPermission();
+        //getting and storing user token for push notification
+        notificationServices.getDeviceToken().then((value) async {
+          var res = await http.post(Uri.parse(API.storeUserToken),
+              body: {
+              "user_id": _rememberCurrentUser.user.user_id.toString(),
+              "token": value,
+              });
+          if(res.statusCode == 200){ //connection with api to server - Successful
+            var resBody = jsonDecode(res.body);
+            if(resBody['success']){
+              print("Successfully stored token");
+            }
+          }
+        });
+
         _rememberCurrentUser.getUserInfo();
       },
       builder: (controller){
