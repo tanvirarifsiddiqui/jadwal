@@ -5,7 +5,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/admins/adminPreferences/current_admin.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
-import 'package:jadwal/controllers/notification_services(class).dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
 import 'package:jadwal/mosques/mosquePreferences/mosquePreferences.dart';
 import 'package:http/http.dart' as http;
@@ -18,14 +17,16 @@ class AdminHomeFragmentScreen extends StatefulWidget {
 class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   final CurrentMosque _currentMosque = Get.put(CurrentMosque());
   final CurrentAdmin _currentAdmin = Get.put(CurrentAdmin());
-
+  late List<String> listOfTokens;
   bool _dataFetched = false; // Track if data has been fetched
+
 
 
   @override
   void initState() {
     super.initState();
     _fetchPrayerTimes(); // Fetch the prayer times when the widget is initialized
+    _fetchUserTokens();
   }
 
   Future<void> _fetchPrayerTimes() async {
@@ -56,6 +57,73 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
       ),
     );
   }
+
+  //fetching user tokens
+  void _fetchUserTokens() async {
+    final res = await http.post(Uri.parse(API.fetchUserToken),
+        body: {
+          "mosque_id": _currentMosque.mosque.mosque_id.toString(),
+        });
+    if (res.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(res.body);
+      List<String> tokens = (data["tokens"] as List).map((token) => token.toString()).toList();
+      listOfTokens = tokens;
+      print(listOfTokens);
+    } else {
+      throw Exception('Failed to fetch tokens');
+    }
+  }
+
+  ///sending notifications to the connected users
+  Future<void> sendNotificationToConnectedUsers(String prayerName, TimeOfDay prayerTime) async {
+    // Define the notification data
+    var notification = {
+      'title': '$prayerName time of ${_currentMosque.mosque.mosque_name} is updated',
+      'body': '${_currentAdmin.admin.admin_name} updated the $prayerName time of ${_currentMosque.mosque.mosque_name}. The current time of $prayerName Jama-at is ${prayerTime.toString()}',
+      'notification_count': 23,
+    };
+
+    var data = {
+      'notification': notification,
+      'data': {
+        'type': 'schedule',
+        'id' : 'tanvir',
+      }
+    };
+
+    // Define the FCM server URL
+    var fcmUrl = Uri.parse('https://fcm.googleapis.com/fcm/send');
+
+    // Define your FCM server key
+    var fcmServerKey = 'AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1';
+
+    for (var token in listOfTokens) {
+      // Send the notification to the current token
+      try {
+        final response = await http.post(
+          fcmUrl,
+          body: jsonEncode({
+            'to': token,
+            'notification': notification,
+            'data': data['data'],
+          }),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'key=$fcmServerKey',
+          },
+        );
+
+        if (kDebugMode) {
+          print(response.body.toString());
+        }
+      } catch (error) {
+        if (kDebugMode) {
+          print(error);
+        }
+      }
+    }
+  }
+
 
   //Time Controller
   timeController(String prayerName,TimeOfDay prayerTime) async {
@@ -95,8 +163,9 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
         var resBody = jsonDecode(res.body);
         if(resBody['success']){
           Fluttertoast.showToast(msg: "Time Schedule of $prayerName is Successfully Updated");
-          //todo sending notification to user about updated time
-          notifyUserUpdatedTime(prayerName,prayerTime);
+          if(listOfTokens.isNotEmpty){
+          sendNotificationToConnectedUsers(prayerName,prayerTime);
+          }
         }
         else {
           Fluttertoast.showToast(msg: "Server don't responding");
@@ -105,43 +174,6 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
-  }
-
-  notifyUserUpdatedTime(String prayerName,TimeOfDay prayerTime) async {
-    // send notification from one device to another
-      var data = {
-        'to' : 'djArGsINS5CkA5CbKnN258:APA91bFpRa01ayJqEQ4V1DvMYzVN7-f_mupUyZQ83DXxorhIT20OQs-zA98P-Xcq-1LZKSizQR1qSW_QNyMYKfx9Wh89YfOMDqkQU2PGPIq-sjOhvXa_izPCOWPfkWslCoSHnZQokmbD',
-        'notification' : {
-          'title' : '$prayerName Time Updated' ,
-          'body' : '$prayerName Time Updated to $prayerTime' ,
-          // "sound": "jetsons_doorbell.mp3"
-        },
-        'android': {
-          'notification': {
-            'notification_count': 23,
-          },
-        },
-        'data' : {
-          'type' : 'schedule' ,
-          'id' : 'tanvir'
-        }
-      };
-
-      await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
-          body: jsonEncode(data) ,
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization' : 'key=AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1'
-          }
-      ).then((value){
-        if (kDebugMode) {
-          print(value.body.toString());
-        }
-      }).onError((error, stackTrace){
-        if (kDebugMode) {
-          print(error);
-        }
-      });
   }
 
 
