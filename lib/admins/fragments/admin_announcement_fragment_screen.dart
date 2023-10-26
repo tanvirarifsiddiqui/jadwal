@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,7 @@ class AdminAnnouncementFragmentScreen extends StatefulWidget {
 class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
   CurrentAdmin currentAdmin = Get.put(CurrentAdmin());
   CurrentMosque currentMosque = Get.put(CurrentMosque());
+  late List<String> listOfTokens;
 
   var controller = TextEditingController();
   var scrollController = ScrollController();
@@ -37,6 +39,7 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
     _setGlobalMember();
     _fetchAnnouncements();
     _setupScrollListener();
+    _fetchUserTokens();
   }
 
   //mosques list
@@ -96,6 +99,56 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
     }
   }
 
+  ///sending Announcements to the connected users
+  Future<void> sendAnnouncementsToConnectedUsers() async {
+    // Define the notification data
+    var notification = {
+      'title': 'An announcement from ${currentMosque.mosque.mosque_name}',
+      'body': '${currentAdmin.admin.admin_name}: $announcementText',
+      'notification_count': 23,
+    };
+
+    var data = {
+      'notification': notification,
+      'data': {
+        'type': 'announcement',
+        'id' : '${currentMosque.mosque.mosque_id}',
+      }
+    };
+
+    // Define the FCM server URL
+    var fcmUrl = Uri.parse('https://fcm.googleapis.com/fcm/send');
+
+    // Define your FCM server key
+    var fcmServerKey = 'AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1';
+
+    for (var token in listOfTokens) {
+      // Send the notification to the current token
+      try {
+        final response = await http.post(
+          fcmUrl,
+          body: jsonEncode({
+            'to': token,
+            'notification': notification,
+            'data': data['data'],
+          }),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'key=$fcmServerKey',
+          },
+        );
+
+        if (kDebugMode) {
+          print(response.body.toString());
+        }
+      } catch (error) {
+        if (kDebugMode) {
+          print(error);
+        }
+      }
+    }
+  }
+
   void animateList() {
     scrollController.jumpTo(scrollController.position.minScrollExtent);
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -104,6 +157,21 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
         animateList();
       }
     });
+  }
+  //fetching user tokens
+  void _fetchUserTokens() async {
+    final res = await http.post(Uri.parse(API.fetchUserToken),
+        body: {
+          "mosque_id": currentMosque.mosque.mosque_id.toString(),
+        });
+    if (res.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(res.body);
+      List<String> tokens = (data["tokens"] as List).map((token) => token.toString()).toList();
+      listOfTokens = tokens;
+      print(listOfTokens);
+    } else {
+      throw Exception('Failed to fetch tokens');
+    }
   }
 
   // Set up a scroll listener to load more messages when scrolling to the top
@@ -245,6 +313,10 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                           setState(() {
                             if(controller.text.isNotEmpty){
                           _sendAnnouncement();
+                          //sending push notification
+                          if(listOfTokens.isNotEmpty){
+                            sendAnnouncementsToConnectedUsers();
+                          }
                             controller.clear();
                             }
                           });

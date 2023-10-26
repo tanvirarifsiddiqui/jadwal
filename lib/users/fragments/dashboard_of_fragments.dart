@@ -68,6 +68,8 @@ class DashboardOfFragments extends StatelessWidget {
       initState: (currentState){
         //for notification
         notificationServices.requestNotificationPermission();
+        notificationServices.firebaseInit(context);
+        notificationServices.setupInteractMessage(context);
         //getting and storing user token for push notification
         notificationServices.getDeviceToken().then((value) async {
           var res = await http.post(Uri.parse(API.storeUserToken),
