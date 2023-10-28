@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:jadwal/mosques/model/search_mosque_model.dart';
 import 'package:jadwal/mosques/model/user_announcement_mosque_model.dart';
 import 'package:jadwal/mosques/model/user_home_mosque_model.dart';
+import 'package:jadwal/widgets/notifications/user_notification_model.dart';
 
 class UsersServerOperation{
   // Function to fetch mosques for user search
@@ -76,6 +77,32 @@ class UsersServerOperation{
       Fluttertoast.showToast(msg: e.toString());
     }
     return mosques;
+  }
+
+  static Future<List<UserNotificationModel>> fetchUserNotifications(int userId, {int page = 1}) async {
+    List<UserNotificationModel> notifications = [];
+    try {
+      var res = await http.post(Uri.parse(API.getNotifications),body: {
+        'user_id': userId.toString(),
+        'page':page.toString(),
+      });
+      print(res.body);
+      //fetching notification data
+      if (res.statusCode == 200) {
+        var data = jsonDecode(res.body);
+        if (data['success']) {
+          // Parse the list of notifications
+          List<dynamic> notificationList = data['notifications'];
+          notifications = notificationList.map((notificationData) {
+            return UserNotificationModel.fromJson(notificationData);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+    print(notifications);
+    return notifications;
   }
 
 

@@ -21,6 +21,7 @@ class API{
   static const storeUserToken = "$hostConnect/user/store_user_token.php";
   static const deleteUserToken = "$hostConnect/user/delete_user_token.php";
   static const fetchAdminToken = "$hostConnect/admin/fetch_admin_tokens.php";
+  static const getNotifications = "$hostConnect/user/get_notifications.php";
 
   //announcements
   static const getAnnouncements = "$hostConnect/announcements/get_announcements.php";
