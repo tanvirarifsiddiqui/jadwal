@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/users/userPreferences/current_user.dart';
-
 import '../../api_connection/api_connection.dart';
 import '../model/mosque.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +25,7 @@ class UserMosqueProfile extends StatefulWidget {
 class _UserMosqueProfileState extends State<UserMosqueProfile> {
   Mosque? _currentMosque;
   final CurrentUser _currentUser = Get.put(CurrentUser());
+  late List<String> listOfTokens;
   late bool isConnected = false;
 
   @override
@@ -32,6 +33,73 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
     super.initState();
     getMosqueInfo();
     getMosqueConnectionStatus();
+    _fetchUserTokens();
+  }
+
+  //fetching user tokens
+  void _fetchUserTokens() async {
+    final res = await http.post(Uri.parse(API.fetchAdminToken),
+        body: {
+          "mosque_id": widget.mosqueId.toString(),
+        });
+    if (res.statusCode == 200) {
+      print(res.body);
+      final Map<String, dynamic> data = json.decode(res.body);
+      List<String> tokens = (data["tokens"] as List).map((token) => token.toString()).toList();
+      listOfTokens = tokens;
+    } else {
+      throw Exception('Failed to fetch tokens');
+    }
+  }
+
+  ///sending notifications to the connected users
+  Future<void> notifyAdmin() async {
+    // Define the notification data
+    var notification = {
+      'title': 'A new person has connected to your mosque',
+      'body': '${_currentUser.user.user_name} has been connected with this mosque',
+      'image': '${API.userImage}${_currentUser.user.user_image}',
+      'notification_count': 23,
+    };
+
+    var data = {
+      'notification': notification,
+      'data': {
+        'type': 'connection',
+        'id' : 'tanvir',
+      }
+    };
+
+    // Define the FCM server URL
+    var fcmUrl = Uri.parse('https://fcm.googleapis.com/fcm/send');
+
+    // Define your FCM server key
+    var fcmServerKey = 'AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1';
+
+    for (var token in listOfTokens) {
+      // Send the notification to the current token
+      try {
+        final response = await http.post(
+          fcmUrl,
+          body: jsonEncode({
+            'to': token,
+            'notification': notification,
+            'data': data['data'],
+          }),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'key=$fcmServerKey',
+          },
+        );
+        if (kDebugMode) {
+          print(response.body.toString());
+        }
+      } catch (error) {
+        if (kDebugMode) {
+          print(error);
+        }
+      }
+    }
   }
 
   //get Mosque Information
@@ -98,14 +166,15 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
         //connection with api to server - Successful
         var resBodyOfMosqueData = jsonDecode(res.body);
 
-        if (resBodyOfMosqueData[
-            'success']) //Successfully Connected Or Disconnected
+        if (resBodyOfMosqueData['success']) //Successfully Connected Or Disconnected
         {
           setState(() {
             isConnected = !isConnected;
             getMosqueInfo();
           });
           if (isConnected) {
+            // sending push notification to the admin
+            notifyAdmin();
             Fluttertoast.showToast(msg: "Successfully Connected");
           } else {
             Fluttertoast.showToast(msg: "Successfully Disconnected");

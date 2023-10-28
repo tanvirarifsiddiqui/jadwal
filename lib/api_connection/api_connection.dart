@@ -1,5 +1,5 @@
 class API{
-  static const hostConnect = "http://192.168.42.146/api_jadwal";
+  static const hostConnect = "http://172.17.5.118/api_jadwal";
 
   //Api jadwal
   static const hostConnectUser = "$hostConnect/user";
@@ -20,6 +20,7 @@ class API{
   static const getUserHomeMosqueData = "$hostConnect/mosque/user_home_mosque.php";
   static const storeUserToken = "$hostConnect/user/store_user_token.php";
   static const deleteUserToken = "$hostConnect/user/delete_user_token.php";
+  static const fetchAdminToken = "$hostConnect/admin/fetch_admin_tokens.php";
 
   //announcements
   static const getAnnouncements = "$hostConnect/announcements/get_announcements.php";
