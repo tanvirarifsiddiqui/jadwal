@@ -32,10 +32,4 @@ class UserNotificationModel{
     );
   }
 
-// Map<String,dynamic> toJson() =>{
-//   // 'mosque_id': mosqueId.toString(),
-//   'admin_id' : adminId.toString(),
-//   'announcement_text' : announcementText,
-// };
-
 }

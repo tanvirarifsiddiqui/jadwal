@@ -7,6 +7,8 @@ import 'package:jadwal/mosques/model/user_announcement_mosque_model.dart';
 import 'package:jadwal/mosques/model/user_home_mosque_model.dart';
 import 'package:jadwal/widgets/notifications/user_notification_model.dart';
 
+import '../widgets/notifications/admin_notification_model.dart';
+
 class UsersServerOperation{
   // Function to fetch mosques for user search
   static Future<List<SearchedMosque>> fetchMosquesForSearch() async {
@@ -30,7 +32,6 @@ class UsersServerOperation{
     }
     return mosques;
   }
-
 
 //Function to fetch Mosques for user Home Screen
   static Future<List<MosqueUserHome>> fetchMosquesForHome(int userId) async {
@@ -95,6 +96,33 @@ class UsersServerOperation{
           List<dynamic> notificationList = data['notifications'];
           notifications = notificationList.map((notificationData) {
             return UserNotificationModel.fromJson(notificationData);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+    print(notifications);
+    return notifications;
+  }
+
+  static Future<List<AdminNotificationModel>> fetchAdminNotifications(int adminId,int mosqueId, {int page = 1}) async {
+    List<AdminNotificationModel> notifications = [];
+    try {
+      var res = await http.post(Uri.parse(API.getAdminNotifications),body: {
+        'mosque_id': mosqueId.toString(),
+        'admin_id': adminId.toString(),
+        'page':page.toString(),
+      });
+      print(res.body);
+      //fetching notification data
+      if (res.statusCode == 200) {
+        var data = jsonDecode(res.body);
+        if (data['success']) {
+          // Parse the list of notifications
+          List<dynamic> notificationList = data['notifications'];
+          notifications = notificationList.map((notificationData) {
+            return AdminNotificationModel.fromJson(notificationData);
           }).toList();
         }
       }
