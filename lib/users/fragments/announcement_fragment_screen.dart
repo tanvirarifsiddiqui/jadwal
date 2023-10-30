@@ -111,12 +111,12 @@ class _AnnouncementFragmentScreenState
         child: Row(
           children: [
             SizedBox(
-              width: 60,
-              height: 60,
+              width: 50,
+              height: 50,
               child: ClipOval(
                 child: Container(
-                  width: 60,
-                  height: 60,
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(

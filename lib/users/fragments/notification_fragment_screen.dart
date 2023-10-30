@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/users/userPreferences/current_user.dart';
 import 'package:jadwal/widgets/notifications/user_notification_model.dart';
 
 import '../../controllers/users_fetch_info.dart';
+
 
 class NotificationFragmentScreen extends StatefulWidget {
   @override
@@ -21,6 +21,8 @@ class _NotificationFragmentScreenState
   int currentPage = 1; // Track the current page of notifications
   bool isLoadingMore = false; // Track whether more notifications are being loaded
 
+  final List<UserNotificationModel> _userNotifications = [];
+
   @override
   void initState() {
     super.initState();
@@ -31,11 +33,7 @@ class _NotificationFragmentScreenState
   Future<void> _fetchUserMosqueInfo() async {
     await _currentUser.getUserInfo();
     await _fetchNotifications();
-    setState(() {
-    });
   }
-
-  List<UserNotificationModel> _userNotifications = [];
 
   Future<void> _fetchNotifications() async {
     // Fetch messages for the current page
@@ -44,7 +42,7 @@ class _NotificationFragmentScreenState
       page: currentPage,
     ).then((notificationList) {
       setState(() {
-        _userNotifications = notificationList;
+        _userNotifications.addAll(notificationList);
         _dataFetched = true;
       });
     }).catchError((error) {});
@@ -71,6 +69,7 @@ class _NotificationFragmentScreenState
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,43 +82,60 @@ class _NotificationFragmentScreenState
         ),
       ),
       body: _dataFetched
-          ? Container(
-        color: Colors.grey.shade900,
-        child: _userNotifications.isNotEmpty
-            ? ListView.builder(
-          itemCount: _userNotifications.length,
-          itemBuilder: (context, index) {
-            return notificationComponent(notification: _userNotifications[index]);
-          },
-        )
-            : const Center(
-            child: Text("No mosque found",
-                style: TextStyle(color: Colors.white))),
-      )
+          ? Column(
+              children: [
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.tight,
+                  child: _userNotifications.isNotEmpty
+                      ? ListView.builder(
+                          controller: scrollController,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: _userNotifications.length,
+                          itemBuilder: (context, index) {
+                            return notificationComponent(
+                                notification: _userNotifications[index]);
+                          },
+                        )
+                      : const Center(
+                          child: Text("No notification found",
+                              style: TextStyle(color: Colors.white))),
+                ),
+                if (isLoadingMore)//todo here i should apply a logic to show no more notification if all notifications are fetched.
+                  const Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+              ],
+            )
           : const Center(child: CircularProgressIndicator()),
     );
   }
 
   Widget notificationComponent({required UserNotificationModel notification}) {
-    // Format the time using intl package
-    final formattedTime = DateFormat.jm().format(notification.notificationDate);
-
     // Calculate the difference in days between the message date and the current date
     final now = DateTime.now();
-    final messageDate = notification.notificationDate.toLocal(); // Convert to local time
+    final messageDate =
+        notification.notificationDate.toLocal(); // Convert to local time
 
-    String dateLabel;
+    // Calculate the time difference
+    final timeDifference = now.difference(messageDate);
 
-    if (now.year == messageDate.year &&
-        now.month == messageDate.month &&
-        now.day - messageDate.day == 1) {
-      dateLabel = 'Yesterday';
-    } else if (now.year == messageDate.year &&
-        now.month == messageDate.month &&
-        now.day == messageDate.day) {
-      dateLabel = 'Today';
+    String timeLabel;
+    if (timeDifference.inMinutes < 60) {
+      timeLabel = '${timeDifference.inMinutes}m';
+    } else if (timeDifference.inHours < 24) {
+      timeLabel = '${timeDifference.inHours}h';
+    } else if (timeDifference.inDays < 7) {
+      timeLabel = '${timeDifference.inDays}d';
+    } else if (timeDifference.inDays < 30) {
+      timeLabel = '${(timeDifference.inDays / 7).floor()}w';
+    } else if (timeDifference.inDays < 365) {
+      timeLabel = '${(timeDifference.inDays / 30).floor()}m';
     } else {
-      dateLabel = DateFormat('dd MMM, yy').format(messageDate);
+      timeLabel = '${(timeDifference.inDays / 365).floor()}y';
     }
 
     return Container(
@@ -132,17 +148,18 @@ class _NotificationFragmentScreenState
         child: Row(
           children: [
             SizedBox(
-              width: 60,
-              height: 60,
+              width: 40,
+              height: 40,
               child: ClipOval(
                 child: Container(
-                  width: 60,
-                  height: 60,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(API.mosqueImage + notification.mosqueImage),
+                      image: NetworkImage(
+                          API.adminImage + notification.adminImage),
                     ),
                   ),
                 ),
@@ -163,7 +180,7 @@ class _NotificationFragmentScreenState
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "${notification.adminName}: ${notification.adminImage}",
+                    notification.notificationText,
                     softWrap: true,
                     style: TextStyle(color: Colors.brown[200]),
                   ),
@@ -172,22 +189,35 @@ class _NotificationFragmentScreenState
             ),
             const SizedBox(width: 10),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  dateLabel,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                  ),
+                  timeLabel,
+                  style: const TextStyle(color: Colors.white),
                 ),
-                Text(
-                  formattedTime,
-                  style: const TextStyle(
-                    color: Colors.white70,
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: 45,
+                  height: 45,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: 45,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                              API.mosqueImage + notification.mosqueImage),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
-            ),
+            )
           ],
         ),
       ),

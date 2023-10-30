@@ -23,8 +23,8 @@ class MosqueChatModel {
         mosque_name: json['mosque_name'],
         mosque_image: json['mosque_image'],
         last_admin_name: json['admin_name'] ?? "",
-        last_announcement_text: json['announcement_text'] ?? "No Announcement",
-        announcementDate: DateTime.parse(json['announcement_date'] ?? '2023-01-03 18:40:08')
+        last_announcement_text: json['announcement_text'] ?? "",
+        announcementDate: DateTime.parse(json['announcement_date'] ?? '0000-00-00 00:00:00')
     );
   }
 }

@@ -217,6 +217,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                 ),
                               ],
                             ),
+                            // todo apply another features here
                           ],
                         ),
                       );

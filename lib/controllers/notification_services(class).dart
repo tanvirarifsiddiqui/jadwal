@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:jadwal/admins/fragments/mosque_fragment_screen.dart';
 import 'package:jadwal/users/fragments/announcement_fragment_screen.dart';
-import 'package:jadwal/users/fragments/dashboard_of_fragments.dart';
+import 'package:jadwal/users/fragments/notification_fragment_screen.dart';
 
 class NotificationServices{
   //initialising firebase message plugin
@@ -160,7 +160,7 @@ class NotificationServices{
   //here handling the notification after clicking what will happen!
   void handleMessage(BuildContext context, RemoteMessage message){
     if(message.data['type']== 'schedule'){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardOfFragments()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>NotificationFragmentScreen()));
     }else if(message.data['type']== 'announcement'){
       Navigator.push(context, MaterialPageRoute(builder: (context)=>AnnouncementFragmentScreen()));
     }else if(message.data['type']== 'connection'){
