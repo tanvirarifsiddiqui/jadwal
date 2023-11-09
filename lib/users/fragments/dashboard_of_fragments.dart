@@ -39,9 +39,9 @@ class DashboardOfFragments extends StatelessWidget {
     },
 
     {
-      "active_icon": Icons.search,
-      "non_active_icon": Icons.search_outlined,
-      "label": "Search"
+      "active_icon": Icons.location_on,
+      "non_active_icon": Icons.location_on_outlined,
+      "label": "Map"
     },
 
 
