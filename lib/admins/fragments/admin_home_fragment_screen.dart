@@ -143,7 +143,7 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
     // Define the notification data
     var notification = {
       'title': '$prayerName time of ${_currentMosque.mosque.mosque_name} is updated',
-      'body': '${_currentAdmin.admin.admin_name} updated the $prayerName time of ${_currentMosque.mosque.mosque_name}. The current time of $prayerName Jama-at is ${prayerTime.toString()}',
+      'body': '${_currentAdmin.admin.admin_name} updated the $prayerName time of ${_currentMosque.mosque.mosque_name}. The current time of $prayerName Jama-at is ${formatTime(prayerTime)}',
       'notification_count': 23,
     };
 
@@ -527,7 +527,7 @@ Widget _buildPrayerTimeWidgets(){
                   ),
                   const Divider(color: Colors.black,),
                   Text(
-                    formatTime(_currentMosque.mosque.fajr),
+                    formatTime(_currentMosque.mosque.jumuah),
                     style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
