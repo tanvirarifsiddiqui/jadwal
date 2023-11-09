@@ -26,14 +26,11 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   void initState() {
     super.initState();
     _fetchPrayerTimes(); // Fetch the prayer times when the widget is initialized
-    _fetchUserTokens();
   }
 
   Future<void> _fetchPrayerTimes() async {
     await _currentMosque.getMosqueInfo(); // Fetch the prayer times from the database
-    setState(() {
-      _dataFetched = true;
-    }); // Trigger a rebuild after fetching the data
+    await _fetchUserTokens();
   }
 
   //image segment
@@ -59,7 +56,7 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   }
 
   //fetching user tokens
-  void _fetchUserTokens() async {
+  Future<void> _fetchUserTokens() async {
     final res = await http.post(Uri.parse(API.fetchUserToken),
         body: {
           "mosque_id": _currentMosque.mosque.mosque_id.toString(),
@@ -68,6 +65,9 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
       final Map<String, dynamic> data = json.decode(res.body);
       List<String> tokens = (data["tokens"] as List).map((token) => token.toString()).toList();
       listOfTokens = tokens;
+      setState(() {
+        _dataFetched = true;
+      }); // Trigger a rebuild after fetching the data
       print(listOfTokens);
     } else {
       throw Exception('Failed to fetch tokens');
@@ -164,7 +164,7 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
         if(resBody['success']){
           Fluttertoast.showToast(msg: "Time Schedule of $prayerName is Successfully Updated");
           if(listOfTokens.isNotEmpty){
-          sendNotificationToConnectedUsers(prayerName,prayerTime);
+          await sendNotificationToConnectedUsers(prayerName,prayerTime);
           }
         }
         else {
