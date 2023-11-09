@@ -80,7 +80,7 @@ class DashboardOfFragments extends StatelessWidget {
           if(res.statusCode == 200){ //connection with api to server - Successful
             var resBody = jsonDecode(res.body);
             if(resBody['success']){
-              print("Successfully stored token");
+              print(resBody['message']);
             }
           }
         });
