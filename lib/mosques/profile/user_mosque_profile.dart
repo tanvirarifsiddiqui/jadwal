@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:jadwal/users/userPreferences/current_user.dart';
 import '../../api_connection/api_connection.dart';
 import '../model/mosque.dart';
@@ -28,16 +29,24 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
   late List<String> listOfTokens;
   late bool isConnected = false;
 
+  // Function to format TimeOfDay as AM/PM
+  String formatTime(TimeOfDay time) {
+    final now = DateTime.now();
+    final timeToFormat = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    final formattedTime = DateFormat.jm().format(timeToFormat);
+    return formattedTime;
+  }
+
   @override
   void initState() {
     super.initState();
     getMosqueInfo();
     getMosqueConnectionStatus();
-    _fetchUserTokens();
+    _fetchAdminTokens();
   }
 
-  //fetching user tokens
-  void _fetchUserTokens() async {
+  //fetching admin tokens
+  void _fetchAdminTokens() async {
     final res = await http.post(Uri.parse(API.fetchAdminToken),
         body: {
           "mosque_id": widget.mosqueId.toString(),
@@ -241,7 +250,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
               prayerName,
               style: const TextStyle(
                 fontSize: 22,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
             ),
@@ -249,13 +258,13 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
               color: Colors.black,
             ),
             Text(
-              // prayerTime.value,
-              "${prayerTime.hour.toString().padLeft(2, "0")}:${prayerTime.minute.toString().padLeft(2, "0")}",
+              formatTime(prayerTime),
               style: const TextStyle(
-                fontSize: 42,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -271,14 +280,14 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
           children: [
             Flexible(child: prayerTimeItem('Fajr', _currentMosque!.fajr)),
             const SizedBox(
-              width: 10,
+              width: 4,
             ),
             Flexible(child: prayerTimeItem('Zuhr', _currentMosque!.zuhr)),
           ],
         ),
 
         const SizedBox(
-          height: 10,
+          height: 4,
         ),
 
         Row(
@@ -286,14 +295,14 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
           children: [
             Flexible(child: prayerTimeItem('Asr', _currentMosque!.asr)),
             const SizedBox(
-              width: 10,
+              width: 4,
             ),
             Flexible(child: prayerTimeItem('Maghrib', _currentMosque!.maghrib)),
           ],
         ),
 
         const SizedBox(
-          height: 10,
+          height: 4,
         ),
 
         Row(
@@ -301,7 +310,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
           children: [
             Flexible(child: prayerTimeItem('Isha', _currentMosque!.isha)),
             const SizedBox(
-              width: 10,
+              width: 4,
             ),
             Flexible(child: prayerTimeItem('Jumuah', _currentMosque!.jumuah)),
           ],
@@ -322,7 +331,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
         ? Material(
             color: Colors.brown.shade800,
             child: ListView(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(24),
               children: [
                 //profile image
                 Center(

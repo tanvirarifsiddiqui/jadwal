@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:jadwal/admins/adminPreferences/current_admin.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
@@ -20,7 +21,37 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   late List<String> listOfTokens;
   bool _dataFetched = false; // Track if data has been fetched
 
-
+  //Card widget item for showing mosque information
+  Widget mosqueInfoItemProfile(IconData iconData, String mosqueData) {
+    return Card(
+      elevation: 3, // Adjust the elevation for the shadow effect
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      color: Colors.brown[300],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Icon(
+              iconData,
+              size: 30,
+              color: Colors.black,
+            ),
+            const SizedBox(width: 16),
+            Flexible(
+              child: Text(
+                mosqueData,
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -37,13 +68,38 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.grey.shade900,
+      color: Colors.brown.shade900,
       child: ListView(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(24),
         children: [
+          // Center(
+          //   child: Image.asset("images/mosque.png", width: 240,),
+          // ),
+
           Center(
-            child: Image.asset("images/mosque.png", width: 240,),
+              child: ClipOval(
+                child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                              "${API.mosqueImage}${_currentMosque.mosque.mosque_image}")),
+                    )),
+              )),
+
+          const SizedBox(
+            height: 20,
           ),
+
+          //mosque name and connectors
+          mosqueInfoItemProfile(
+              Icons.mosque, _currentMosque.mosque.mosque_name),
+          // const SizedBox(
+          //   height: 10,
+          // ),
 
           const SizedBox(height: 20,),
           _dataFetched
@@ -72,6 +128,14 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
     } else {
       throw Exception('Failed to fetch tokens');
     }
+  }
+
+  // Function to format TimeOfDay as AM/PM
+  String formatTime(TimeOfDay time) {
+    final now = DateTime.now();
+    final timeToFormat = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    final formattedTime = DateFormat.jm().format(timeToFormat);
+    return formattedTime;
   }
 
   ///sending notifications to the connected users
@@ -207,16 +271,16 @@ Widget _buildPrayerTimeWidgets(){
                     "Fajr",
                     style: TextStyle(
                       fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
                   ),
                   const Divider(color: Colors.black,),
                   Text(
-                    // prayerTime.value,
-                    "${_currentMosque.mosque.fajr.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.fajr.minute.toString().padLeft(2,"0")}",
+                    formatTime(_currentMosque.mosque.fajr),
                     style: const TextStyle(
-                      fontSize: 42,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
@@ -254,16 +318,16 @@ Widget _buildPrayerTimeWidgets(){
                     "Zuhr",
                     style: TextStyle(
                       fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
                   ),
                   const Divider(color: Colors.black,),
                   Text(
-                    // prayerTime.value,
-                    "${_currentMosque.mosque.zuhr.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.zuhr.minute.toString().padLeft(2,"0")}",
+                    formatTime(_currentMosque.mosque.zuhr),
                     style: const TextStyle(
-                      fontSize: 42,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
@@ -309,16 +373,16 @@ Widget _buildPrayerTimeWidgets(){
                     "Asr",
                     style: TextStyle(
                       fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
                   ),
                   const Divider(color: Colors.black,),
                   Text(
-                    // prayerTime.value,
-                    "${_currentMosque.mosque.asr.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.asr.minute.toString().padLeft(2,"0")}",
+                    formatTime(_currentMosque.mosque.asr),
                     style: const TextStyle(
-                      fontSize: 42,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
@@ -356,16 +420,16 @@ Widget _buildPrayerTimeWidgets(){
                     "Maghrib",
                     style: TextStyle(
                       fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
                   ),
                   const Divider(color: Colors.black,),
                   Text(
-                    // prayerTime.value,
-                    "${_currentMosque.mosque.maghrib.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.maghrib.minute.toString().padLeft(2,"0")}",
+                    formatTime(_currentMosque.mosque.maghrib),
                     style: const TextStyle(
-                      fontSize: 42,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
@@ -410,16 +474,16 @@ Widget _buildPrayerTimeWidgets(){
                     "Isha",
                     style: TextStyle(
                       fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
                   ),
                   const Divider(color: Colors.black,),
                   Text(
-                    // prayerTime.value,
-                    "${_currentMosque.mosque.isha.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.isha.minute.toString().padLeft(2,"0")}",
+                    formatTime(_currentMosque.mosque.isha),
                     style: const TextStyle(
-                      fontSize: 42,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
@@ -457,16 +521,16 @@ Widget _buildPrayerTimeWidgets(){
                     "Jumuah",
                     style: TextStyle(
                       fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
                   ),
                   const Divider(color: Colors.black,),
                   Text(
-                    // prayerTime.value,
-                    "${_currentMosque.mosque.jumuah.hour.toString().padLeft(2,"0")}:${_currentMosque.mosque.jumuah.minute.toString().padLeft(2,"0")}",
+                    formatTime(_currentMosque.mosque.fajr),
                     style: const TextStyle(
-                      fontSize: 42,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
@@ -494,6 +558,8 @@ Widget _buildPrayerTimeWidgets(){
         // Add more widget boxes as needed
       ],
     );
+
+
 
 }
 

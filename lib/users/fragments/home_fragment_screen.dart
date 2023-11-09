@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/model/user_home_mosque_model.dart';
 import 'package:jadwal/mosques/profile/user_mosque_profile.dart';
@@ -19,6 +20,15 @@ class HomeFragmentScreen extends StatefulWidget {
 class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
   final CurrentUser _currentUser = Get.put(CurrentUser());
   bool _dataFetched = false;
+
+  // Function to format TimeOfDay as AM/PM
+  String formatTime(TimeOfDay time) {
+    final now = DateTime.now();
+    final timeToFormat = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    final formattedTime = DateFormat.jm().format(timeToFormat);
+    return formattedTime;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -84,7 +94,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
             ),
             IconButton(
                 onPressed:(){
-                  Get.to(()=>QRScanner());
+                  Get.to(()=>const QRScanner());
                 },
                 icon: const Icon(Icons.qr_code_scanner,)
             ),
@@ -145,34 +155,34 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                               ),
                               children: [
                                 const Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),),
-                                Divider(color: Colors.white,),
+                                const Divider(color: Colors.white,),
                                 const SizedBox(height: 10,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     Flexible(child: prayerTimeItem('Fajr', _mosques[index].fajr)),
                                     const SizedBox(
-                                      width: 10,
+                                      width: 4,
                                     ),
                                     Flexible(child: prayerTimeItem('Zuhr', _mosques[index].zuhr)),
                                   ],
                                 ),
 
-                                const SizedBox(height: 10,),
+                                const SizedBox(height: 4,),
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     Flexible(child: prayerTimeItem('Asr', _mosques[index].asr)),
                                     const SizedBox(
-                                      width: 10,
+                                      width: 4,
                                     ),
                                     Flexible(child: prayerTimeItem('Maghrib', _mosques[index].maghrib)),
                                   ],
                                 ),
 
                                 const SizedBox(
-                                  height: 10,
+                                  height: 4,
                                 ),
 
                                 Row(
@@ -180,14 +190,13 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                   children: [
                                     Flexible(child: prayerTimeItem('Isha', _mosques[index].isha)),
                                     const SizedBox(
-                                      width: 10,
+                                      width: 4,
                                     ),
                                     Flexible(child: prayerTimeItem('Jumuah', _mosques[index].jumuah)),
                                   ],
                                 ),
 
-                                const SizedBox(height: 10,),
-                                const SizedBox(height: 15),
+                                const SizedBox(height: 20,),
                                 // This button is used to remove this item
                                 GestureDetector(
                                   onTap: () {
@@ -215,6 +224,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                     ),
                                   ),
                                 ),
+                                const SizedBox(height: 15),
                               ],
                             ),
                             // todo apply another features here
@@ -249,58 +259,6 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
             : const Center(child: CircularProgressIndicator()));
   }
 
-  // Widget _buildPrayerTimeWidgets() {
-  //   return Column(
-  //     children: [
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //         children: [
-  //           Flexible(child: prayerTimeItem('Fajr', _currentMosque!.fajr)),
-  //           const SizedBox(
-  //             width: 10,
-  //           ),
-  //           Flexible(child: prayerTimeItem('Zuhr', _currentMosque!.zuhr)),
-  //         ],
-  //       ),
-  //
-  //       const SizedBox(
-  //         height: 10,
-  //       ),
-  //
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //         children: [
-  //           Flexible(child: prayerTimeItem('Asr', _currentMosque!.asr)),
-  //           const SizedBox(
-  //             width: 10,
-  //           ),
-  //           Flexible(child: prayerTimeItem('Maghrib', _currentMosque!.maghrib)),
-  //         ],
-  //       ),
-  //
-  //       const SizedBox(
-  //         height: 10,
-  //       ),
-  //
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //         children: [
-  //           Flexible(child: prayerTimeItem('Isha', _currentMosque!.isha)),
-  //           const SizedBox(
-  //             width: 10,
-  //           ),
-  //           Flexible(child: prayerTimeItem('Jumuah', _currentMosque!.jumuah)),
-  //         ],
-  //       ),
-  //
-  //       const SizedBox(
-  //         height: 10,
-  //       ),
-  //
-  //       // Add more widget boxes as needed
-  //     ],
-  //   );
-  // }
   Widget prayerTimeItem(String prayerName, TimeOfDay prayerTime) {
     return Card(
       elevation: 3,
@@ -319,7 +277,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
               prayerName,
               style: const TextStyle(
                 fontSize: 22,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
             ),
@@ -327,129 +285,16 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
               color: Colors.black,
             ),
             Text(
-              // prayerTime.value,
-              "${prayerTime.hour.toString().padLeft(2, "0")}:${prayerTime.minute.toString().padLeft(2, "0")}",
+              formatTime(prayerTime),
               style: const TextStyle(
-                fontSize: 42,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
-//todo uncommentable under listview.builder
-// _dataFetched
-//     ? _buildPrayerTimeWidgets() // Build prayer time widgets if data is fetched
-//     : const Center(child: CircularProgressIndicator()), // Show loading indicator while fetching data
-  //todo later uncomment
-  //Mosque Name widget
-  // Widget mosqueName(String mosqueName){
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       borderRadius: BorderRadius.circular(12),
-  //       color: Colors.brown[400],
-  //     ),
-  //     padding: const EdgeInsets.symmetric(
-  //       horizontal: 16,
-  //       vertical: 8,
-  //     ),
-  //     child: Row(
-  //       children: [
-  //         const Icon(Icons.mosque,size: 30,color: Colors.black,),
-  //         const SizedBox(width: 16,),
-  //         Center(
-  //           child: Text(
-  //             mosqueName,
-  //             style: const TextStyle(
-  //               fontSize: 18,
-  //               color: Colors.amberAccent
-  //
-  //             ),
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // //prayer time widget item
-  // Widget prayerTimeItem(String prayerName, TimeOfDay prayerTime) {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       borderRadius: BorderRadius.circular(15),
-  //       color: Colors.brown[400],
-  //     ),
-  //     padding: const EdgeInsets.symmetric(
-  //       horizontal: 8,
-  //       vertical: 8,
-  //     ),
-  //     child: Column(
-  //       children: [
-  //         Text(
-  //           prayerName,
-  //           style: const TextStyle(
-  //             fontSize: 22,
-  //             fontWeight: FontWeight.bold,
-  //             color: Colors.white70,
-  //           ),
-  //         ),
-  //         const Divider(color: Colors.white,),
-  //         Text(
-  //           // prayerTime.value,
-  //           "${prayerTime.hour.toString().padLeft(2,"0")}:${prayerTime.minute.toString().padLeft(2,"0")}",
-  //           style: const TextStyle(
-  //             fontSize: 42,
-  //             color: Colors.white70,
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildPrayerTimeWidgets(){
-  //   return Column(
-  //     children: [
-  //       mosqueName(_currentMosque1.mosque.mosque_name),
-  //       const SizedBox(height: 12,),
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //         children: [
-  //           Flexible(child: prayerTimeItem('Fajr', _currentMosque1.mosque.fajr)),
-  //           const SizedBox(width: 12,),
-  //           Flexible(child: prayerTimeItem('Zuhr', _currentMosque1.mosque.zuhr)),
-  //         ],
-  //       ),
-  //
-  //       const SizedBox(height: 12,),
-  //
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //         children: [
-  //           Flexible(child: prayerTimeItem('Asr', _currentMosque1.mosque.asr)),
-  //           const SizedBox(width: 12,),
-  //           Flexible(child: prayerTimeItem('Maghrib', _currentMosque1.mosque.maghrib)),
-  //         ],
-  //       ),
-  //
-  //       const SizedBox(height: 12,),
-  //
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //         children: [
-  //           Flexible(child: prayerTimeItem('Isha', _currentMosque1.mosque.isha)),
-  //           const SizedBox(width: 12,),
-  //           Flexible(child: prayerTimeItem('Jumuah', _currentMosque1.mosque.jumuah)),
-  //         ],
-  //       ),
-  //
-  //       const SizedBox(height: 12,),
-  //
-  //       // Add more widget boxes as needed
-  //     ],
-  //   );
-  //
-  // }
 }

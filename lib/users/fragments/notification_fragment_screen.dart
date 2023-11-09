@@ -124,7 +124,9 @@ class _NotificationFragmentScreenState
     final timeDifference = now.difference(messageDate);
 
     String timeLabel;
-    if (timeDifference.inMinutes < 60) {
+    if (timeDifference.inSeconds < 60) {
+      timeLabel = '${timeDifference.inSeconds}s';
+    }else if (timeDifference.inMinutes < 60) {
       timeLabel = '${timeDifference.inMinutes}m';
     } else if (timeDifference.inHours < 24) {
       timeLabel = '${timeDifference.inHours}h';
