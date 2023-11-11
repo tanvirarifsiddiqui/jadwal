@@ -85,7 +85,7 @@ class NotificationServices{
 
     AndroidNotificationChannel channel = AndroidNotificationChannel(
         Random.secure().nextInt(1000).toString(),
-        "Test Notification Channel" ,
+        "high_importance_channel" ,
         importance: Importance.max  ,
         showBadge: true ,
         playSound: true,
@@ -100,9 +100,10 @@ class NotificationServices{
         priority: Priority.high ,
         playSound: true,
         ticker: 'ticker' ,
-        sound: channel.sound
+        sound: channel.sound,
+        color: Colors.blue,
       //     sound: RawResourceAndroidNotificationSound('jetsons_doorbell')
-      //  icon: largeIconPath
+       icon: '@drawable/icon',
     );
 
     const DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(

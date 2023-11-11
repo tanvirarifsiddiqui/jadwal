@@ -158,6 +158,10 @@ class _NotificationFragmentScreenState
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white60, // Adjust the border color
+                      width: 2, // Adjust the border width
+                    ),
                     image: DecorationImage(
                       fit: BoxFit.cover,
                       image: NetworkImage(
@@ -208,7 +212,10 @@ class _NotificationFragmentScreenState
                       width: 45,
                       height: 45,
                       decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
+                        border: Border.all(
+                          color: Colors.white60, // Adjust the border color
+                          width: 3, // Adjust the border width
+                        ),
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: NetworkImage(

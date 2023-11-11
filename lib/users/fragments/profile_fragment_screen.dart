@@ -17,6 +17,10 @@ class ProfileFragmentScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white54, // Adjust the border color
+          width: 2, // Adjust the border width
+        ),
         color: Colors.brown[300],
       ),
       padding: const EdgeInsets.symmetric(
@@ -115,6 +119,10 @@ class ProfileFragmentScreen extends StatelessWidget {
               height: 200,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white60, // Adjust the border color
+                    width: 4, // Adjust the border width
+                  ),
                   image: DecorationImage(
                     fit: BoxFit.cover,
                       image: NetworkImage("${API.userImage}${_currentUser.user.user_image}")

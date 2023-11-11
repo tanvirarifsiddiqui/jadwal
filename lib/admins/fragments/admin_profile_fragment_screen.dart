@@ -14,38 +14,16 @@ import '../../controllers/notification_services(class).dart';
 
 class AdminProfileFragmentScreen extends StatelessWidget {
 
-  // Widget adminInfoItemProfile(IconData iconData, String adminData){
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       borderRadius: BorderRadius.circular(12),
-  //       color: Colors.brown[300],
-  //     ),
-  //     padding: const EdgeInsets.symmetric(
-  //       horizontal: 16,
-  //       vertical: 8,
-  //     ),
-  //     child: Row(
-  //       children: [
-  //         Icon(iconData,size: 30,color: Colors.black,),
-  //         const SizedBox(width: 16,),
-  //         Text(
-  //           adminData,
-  //           style: const TextStyle(
-  //             fontSize: 15,
-  //
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
   NotificationServices notificationServices = NotificationServices();
 
   Widget adminInfoItemProfile(IconData iconData, String adminData) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white54, // Adjust the border color
+          width: 2, // Adjust the border width
+        ),
         color: Colors.brown[300],
       ),
       padding: const EdgeInsets.symmetric(
@@ -149,6 +127,10 @@ class AdminProfileFragmentScreen extends StatelessWidget {
                 height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white60, // Adjust the border color
+                    width: 4, // Adjust the border width
+                  ),
                   image: DecorationImage(
                       fit: BoxFit.cover,
                       image: NetworkImage("${API.adminImage}${_currentAdmin.admin.admin_image}")

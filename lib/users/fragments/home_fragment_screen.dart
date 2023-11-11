@@ -130,6 +130,10 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                                           height: 75,
                                           decoration: BoxDecoration(
                                               shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: Colors.white60, // Adjust the border color
+                                                width: 2.5, // Adjust the border width
+                                              ),
                                               image: DecorationImage(
                                                 fit: BoxFit.cover,
                                                 image: NetworkImage(API.mosqueImage+_mosques[index].mosque_image),
@@ -155,7 +159,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                               ),
                               children: [
                                 const Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),),
-                                const Divider(color: Colors.white,),
+                                const Divider(thickness: 1.5, color: Colors.white70,),
                                 const SizedBox(height: 10,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -264,6 +268,10 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
       elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
+        side: const BorderSide(
+          color: Colors.white54, // Adjust the border color
+          width: 2, // Adjust the border width
+        ),
       ),
       color: Colors.brown[300],
       child: Padding(
@@ -282,6 +290,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
               ),
             ),
             const Divider(
+              thickness: 1.25,
               color: Colors.black,
             ),
             Text(

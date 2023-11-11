@@ -122,63 +122,75 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
   }
 
   mosqueComponent({required SearchedMosque mosque}) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          InkWell(
-            onTap: () {
-              // Get.to(MosqueProfileUser(mosqueId: mosque.mosque_id));
-              Get.to(() => UserMosqueProfile(mosqueId: mosque.mosque_id));
-            },
-            child: Row(children: [
-              SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: ClipOval(
-                      child: Container(
+    return Padding(
+      padding: const EdgeInsets.only(left: 2,right: 2),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: () {
+                // Get.to(MosqueProfileUser(mosqueId: mosque.mosque_id));
+                Get.to(() => UserMosqueProfile(mosqueId: mosque.mosque_id));
+              },
+              child: Row(children: [
+                SizedBox(
                     width: 60,
                     height: 60,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                              API.mosqueImage + mosque.mosque_image),
-                        )),
-                  ))),
-              const SizedBox(width: 10),
-              SizedBox(
-                width: MediaQuery.of(context).size.width *
-                    0.4, //solved by media query
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(mosque.mosque_name,
-                          softWrap: true,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500)),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(mosque.mosque_address,
-                          softWrap: true,
-                          style: TextStyle(color: Colors.brown[200])),
-                    ]),
-              ),
-              const SizedBox(
-                  height: 5), // Add space between address and connection text
-              Text(
-                '${mosque.connectors} Connectors', // Replace with your mosque connection data
-                style: TextStyle(
-                    color: Colors.white70), // Style for connection text
-              ),
-            ]),
-          ),
-        ],
+                    child: ClipOval(
+                        child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white60, // Adjust the border color
+                            width: 2.5, // Adjust the border width
+                          ),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                                API.mosqueImage + mosque.mosque_image),
+                          )),
+                    ))),
+                const SizedBox(width: 10),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width *
+                      0.55, //solved by media query
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(mosque.mosque_name,
+                            softWrap: true,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500)),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(mosque.mosque_address,
+                            softWrap: true,
+                            style: TextStyle(color: Colors.brown[200])),
+                      ]),
+                ),
+                const SizedBox(
+                    width: 5), // Add space between address and connection text
+                Row(mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Icon(Icons.connect_without_contact, color: Colors.white70,),
+                    Text(
+                      " ${mosque.connectors}", // Replace with your mosque connection data
+                      style: const TextStyle(
+                          color: Colors.white), // Style for connection text
+                    ),
+                  ],
+                ),
+              ]),
+            ),
+          ],
+        ),
       ),
     );
   }

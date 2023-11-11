@@ -10,6 +10,10 @@ class MosqueFragmentScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white54, // Adjust the border color
+          width: 2, // Adjust the border width
+        ),
         color: Colors.brown[300],
       ),
       padding: const EdgeInsets.symmetric(
@@ -54,6 +58,10 @@ class MosqueFragmentScreen extends StatelessWidget {
                   height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white60, // Adjust the border color
+                      width: 4, // Adjust the border width
+                    ),
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: NetworkImage("${API.mosqueImage}${_currentMosque.mosque.mosque_image}")

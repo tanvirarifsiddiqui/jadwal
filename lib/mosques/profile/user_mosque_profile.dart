@@ -205,6 +205,11 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
       elevation: 3, // Adjust the elevation for the shadow effect
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
+        side: const BorderSide(
+          color: Colors.white54, // Adjust the border color
+          width: 2, // Adjust the border width
+        ),
+
       ),
       color: Colors.brown[300],
       child: Padding(
@@ -237,6 +242,11 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
       elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
+        side: const BorderSide(
+          color: Colors.white54, // Adjust the border color
+          width: 2, // Adjust the border width
+        ),
+
       ),
       color: Colors.brown[300],
       child: Padding(
@@ -255,6 +265,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
               ),
             ),
             const Divider(
+              thickness: 1.25,
               color: Colors.black,
             ),
             Text(
@@ -340,6 +351,10 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                       width: 200,
                       height: 200,
                       decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.white60, // Adjust the border color
+                          width: 4, // Adjust the border width
+                        ),
                         shape: BoxShape.circle,
                         image: DecorationImage(
                             fit: BoxFit.cover,
@@ -381,7 +396,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                         decoration: BoxDecoration(
                             color: isConnected
                                 ? Colors.brown[900]
-                                : Color(0xffffff),
+                                : const Color(0xffffff),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isConnected
@@ -402,7 +417,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                   height: 10,
                 ),
                 const Center(child: Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),)),
-                const Divider(color: Colors.white,),
+                const Divider(thickness: 1.5,color: Colors.white70,),
                 const SizedBox(height: 10,),
                 _buildPrayerTimeWidgets(),
 

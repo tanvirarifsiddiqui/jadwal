@@ -111,14 +111,18 @@ class _AnnouncementFragmentScreenState
         child: Row(
           children: [
             SizedBox(
-              width: 50,
-              height: 50,
+              width: 60,
+              height: 60,
               child: ClipOval(
                 child: Container(
-                  width: 50,
-                  height: 50,
+                  width: 60,
+                  height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white60, // Adjust the border color
+                      width: 2.5, // Adjust the border width
+                    ),
                     image: DecorationImage(
                       fit: BoxFit.cover,
                       image: NetworkImage(API.mosqueImage + mosque.mosque_image),

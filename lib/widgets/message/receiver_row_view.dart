@@ -76,8 +76,17 @@ class ReceiverRowView extends StatelessWidget {
               style: const TextStyle(fontSize: 10, color: Colors.white70),
             ),
           ),
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(API.adminImage + announcement.adminImage),
+          leading: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white60, // Adjust the border color
+                width: 1.5, // Adjust the border width
+              ),
+            ),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(API.adminImage + announcement.adminImage),
+            ),
           ),
         ),
       ],

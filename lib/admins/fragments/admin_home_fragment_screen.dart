@@ -12,7 +12,8 @@ import 'package:http/http.dart' as http;
 
 class AdminHomeFragmentScreen extends StatefulWidget {
   @override
-  _AdminHomeFragmentScreenState createState() => _AdminHomeFragmentScreenState();
+  _AdminHomeFragmentScreenState createState() =>
+      _AdminHomeFragmentScreenState();
 }
 
 class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
@@ -27,6 +28,10 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
       elevation: 3, // Adjust the elevation for the shadow effect
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
+        side: const BorderSide(
+          color: Colors.white54, // Adjust the border color
+          width: 2, // Adjust the border width
+        ),
       ),
       color: Colors.brown[300],
       child: Padding(
@@ -60,14 +65,16 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   }
 
   Future<void> _fetchPrayerTimes() async {
-    await _currentMosque.getMosqueInfo(); // Fetch the prayer times from the database
+    await _currentMosque
+        .getMosqueInfo(); // Fetch the prayer times from the database
     await _fetchUserTokens();
   }
 
   //image segment
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return _dataFetched
+        ? Material(
       color: Colors.brown.shade900,
       child: ListView(
         padding: const EdgeInsets.all(24),
@@ -78,17 +85,21 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
 
           Center(
               child: ClipOval(
-                child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                              "${API.mosqueImage}${_currentMosque.mosque.mosque_image}")),
-                    )),
-              )),
+            child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white60, // Adjust the border color
+                      width: 4, // Adjust the border width
+                    ),
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(
+                          "${API.mosqueImage}${_currentMosque.mosque.mosque_image}")),
+                )),
+          )),
 
           const SizedBox(
             height: 20,
@@ -101,25 +112,30 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
           //   height: 10,
           // ),
 
-          const SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           _dataFetched
               ? _buildPrayerTimeWidgets() // Build prayer time widgets if data is fetched
               : const Center(child: CircularProgressIndicator()), // Show loading indicator while fetching data
 
         ],
       ),
-    );
+    )
+    : const Center(
+    child:
+    CircularProgressIndicator());
   }
 
   //fetching user tokens
   Future<void> _fetchUserTokens() async {
-    final res = await http.post(Uri.parse(API.fetchUserToken),
-        body: {
-          "mosque_id": _currentMosque.mosque.mosque_id.toString(),
-        });
+    final res = await http.post(Uri.parse(API.fetchUserToken), body: {
+      "mosque_id": _currentMosque.mosque.mosque_id.toString(),
+    });
     if (res.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(res.body);
-      List<String> tokens = (data["tokens"] as List).map((token) => token.toString()).toList();
+      List<String> tokens =
+          (data["tokens"] as List).map((token) => token.toString()).toList();
       listOfTokens = tokens;
       setState(() {
         _dataFetched = true;
@@ -133,17 +149,21 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   // Function to format TimeOfDay as AM/PM
   String formatTime(TimeOfDay time) {
     final now = DateTime.now();
-    final timeToFormat = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    final timeToFormat =
+        DateTime(now.year, now.month, now.day, time.hour, time.minute);
     final formattedTime = DateFormat.jm().format(timeToFormat);
     return formattedTime;
   }
 
   ///sending notifications to the connected users
-  Future<void> sendNotificationToConnectedUsers(String prayerName, TimeOfDay prayerTime) async {
+  Future<void> sendNotificationToConnectedUsers(
+      String prayerName, TimeOfDay prayerTime) async {
     // Define the notification data
     var notification = {
-      'title': '$prayerName time of ${_currentMosque.mosque.mosque_name} is updated',
-      'body': '${_currentAdmin.admin.admin_name} updated the $prayerName time of ${_currentMosque.mosque.mosque_name}. The current time of $prayerName Jama-at is ${formatTime(prayerTime)}',
+      'title':
+          '$prayerName time of ${_currentMosque.mosque.mosque_name} is updated',
+      'body':
+          '${_currentAdmin.admin.admin_name} updated the $prayerName time of ${_currentMosque.mosque.mosque_name}. The current time of $prayerName Jama-at is ${formatTime(prayerTime)}',
       'notification_count': 23,
     };
 
@@ -151,7 +171,7 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
       'notification': notification,
       'data': {
         'type': 'schedule',
-        'id' : 'tanvir',
+        'id': 'tanvir',
       }
     };
 
@@ -159,7 +179,8 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
     var fcmUrl = Uri.parse('https://fcm.googleapis.com/fcm/send');
 
     // Define your FCM server key
-    var fcmServerKey = 'AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1';
+    var fcmServerKey =
+        'AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1';
 
     for (var token in listOfTokens) {
       // Send the notification to the current token
@@ -188,50 +209,49 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
     }
   }
 
-
   //Time Controller
-  timeController(String prayerName,TimeOfDay prayerTime) async {
-    TimeOfDay ? pickedTime = await showTimePicker(
+  timeController(String prayerName, TimeOfDay prayerTime) async {
+    TimeOfDay? pickedTime = await showTimePicker(
       context: Get.context!,
       initialTime: prayerTime,
-      builder: (context, child){
+      builder: (context, child) {
         return Theme(data: ThemeData.dark(), child: child!);
       },
       initialEntryMode: TimePickerEntryMode.dial,
       helpText: "Select $prayerName Time",
     );
-    if(pickedTime != null && pickedTime != prayerTime){
+    if (pickedTime != null && pickedTime != prayerTime) {
       updateTimeNow(prayerName, pickedTime);
       return pickedTime;
     }
   }
 
   //Saving updated time into database
-  updateTimeNow(String prayerName,TimeOfDay prayerTime) async {
-
+  updateTimeNow(String prayerName, TimeOfDay prayerTime) async {
     //string formation of dayOfTime
     String formatTimeOfDay(TimeOfDay time) {
-    return "${time.hour}:${time.minute}";
-  }
+      return "${time.hour}:${time.minute}";
+    }
+
     try {
-      var res = await http.post(Uri.parse(API.updateMosqueTime),
-          body: {
-            "mosque_id":_currentMosque.mosque.mosque_id.toString(),
-            "mosque_name": _currentMosque.mosque.mosque_name,
-            "admin_id": _currentAdmin.admin.admin_id.toString(),
-            "admin_name": _currentAdmin.admin.admin_name,
-            "prayer_name":prayerName,
-            "prayer_time":formatTimeOfDay(prayerTime),
-          });
-      if(res.statusCode == 200){ //connection with api to server - Successful
+      var res = await http.post(Uri.parse(API.updateMosqueTime), body: {
+        "mosque_id": _currentMosque.mosque.mosque_id.toString(),
+        "mosque_name": _currentMosque.mosque.mosque_name,
+        "admin_id": _currentAdmin.admin.admin_id.toString(),
+        "admin_name": _currentAdmin.admin.admin_name,
+        "prayer_name": prayerName,
+        "prayer_time": formatTimeOfDay(prayerTime),
+      });
+      if (res.statusCode == 200) {
+        //connection with api to server - Successful
         var resBody = jsonDecode(res.body);
-        if(resBody['success']){
-          Fluttertoast.showToast(msg: "Time Schedule of $prayerName is Successfully Updated");
-          if(listOfTokens.isNotEmpty){
-          await sendNotificationToConnectedUsers(prayerName,prayerTime);
+        if (resBody['success']) {
+          Fluttertoast.showToast(
+              msg: "Time Schedule of $prayerName is Successfully Updated");
+          if (listOfTokens.isNotEmpty) {
+            await sendNotificationToConnectedUsers(prayerName, prayerTime);
           }
-        }
-        else {
+        } else {
           Fluttertoast.showToast(msg: "Server don't responding");
         }
       }
@@ -240,26 +260,34 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
     }
   }
 
-
-
-
-Widget _buildPrayerTimeWidgets(){
+  Widget _buildPrayerTimeWidgets() {
     return Column(
       children: [
-        const Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),),
-        const Divider(color: Colors.white,),
-        const SizedBox(height: 10,),
+        const Text(
+          "Prayer Schedule",
+          style: TextStyle(fontSize: 28, color: Colors.white70),
+        ),
+        const Divider(
+          thickness: 1.5,
+          color: Colors.white70,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
         //1st Tow Segments
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             //Fajr Time Segment
-            Flexible(child: Container(
+            Flexible(
+                child: Container(
               decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white54, // Adjust the border color
+                  width: 2, // Adjust the border width
+                ),
                 borderRadius: BorderRadius.circular(15),
                 color: Colors.brown[300],
-
-
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -275,7 +303,10 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   Text(
                     formatTime(_currentMosque.mosque.fajr),
                     style: const TextStyle(
@@ -284,28 +315,40 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
-                      _currentMosque.mosque.fajr = await timeController("fajr",_currentMosque.mosque.fajr);
+                      _currentMosque.mosque.fajr = await timeController(
+                          "fajr", _currentMosque.mosque.fajr);
 
                       //saving updated time data into local storage
-                      await RememberMosquePrefs.storeMosqueInfo(_currentMosque.mosque);
+                      await RememberMosquePrefs.storeMosqueInfo(
+                          _currentMosque.mosque);
 
-                      setState(() {}); // Trigger a rebuild to reflect the changes
+                      setState(
+                          () {}); // Trigger a rebuild to reflect the changes
                     },
                   )
                 ],
               ),
-            )
+            )),
+            const SizedBox(
+              width: 12,
             ),
-            const SizedBox(width: 12,),
 
             //Zuhr Time Segment
-            Flexible(child: Container(
+            Flexible(
+                child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: Colors.white54, // Adjust the border color
+                  width: 2, // Adjust the border width
+                ),
                 color: Colors.brown[300],
               ),
               padding: const EdgeInsets.symmetric(
@@ -322,7 +365,10 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   Text(
                     formatTime(_currentMosque.mosque.zuhr),
                     style: const TextStyle(
@@ -331,35 +377,46 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
-                      _currentMosque.mosque.zuhr = await timeController("zuhr",_currentMosque.mosque.zuhr);
+                      _currentMosque.mosque.zuhr = await timeController(
+                          "zuhr", _currentMosque.mosque.zuhr);
 
                       //saving updated time data into local storage
-                      await RememberMosquePrefs.storeMosqueInfo(_currentMosque.mosque);
+                      await RememberMosquePrefs.storeMosqueInfo(
+                          _currentMosque.mosque);
 
-                      setState(() {}); // Trigger a rebuild to reflect the changes
+                      setState(
+                          () {}); // Trigger a rebuild to reflect the changes
                     },
                   )
                 ],
               ),
-            )
-            ),
+            )),
           ],
         ),
 
-        const SizedBox(height: 12,),
+        const SizedBox(
+          height: 12,
+        ),
 
         //2nd Tow Segments
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-
             //Asr Time Segment
-            Flexible(child: Container(
+            Flexible(
+                child: Container(
               decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white54, // Adjust the border color
+                  width: 2, // Adjust the border width
+                ),
                 borderRadius: BorderRadius.circular(15),
                 color: Colors.brown[300],
               ),
@@ -377,7 +434,10 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   Text(
                     formatTime(_currentMosque.mosque.asr),
                     style: const TextStyle(
@@ -386,28 +446,40 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
-                      _currentMosque.mosque.asr = await timeController("asr",_currentMosque.mosque.asr);
+                      _currentMosque.mosque.asr = await timeController(
+                          "asr", _currentMosque.mosque.asr);
 
                       //saving updated time data into local storage
-                      await RememberMosquePrefs.storeMosqueInfo(_currentMosque.mosque);
+                      await RememberMosquePrefs.storeMosqueInfo(
+                          _currentMosque.mosque);
 
-                      setState(() {}); // Trigger a rebuild to reflect the changes
+                      setState(
+                          () {}); // Trigger a rebuild to reflect the changes
                     },
                   )
                 ],
               ),
-            )
+            )),
+            const SizedBox(
+              width: 12,
             ),
-            const SizedBox(width: 12,),
 
             //Maghrib Time Segment
-            Flexible(child: Container(
+            Flexible(
+                child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: Colors.white54, // Adjust the border color
+                  width: 2, // Adjust the border width
+                ),
                 color: Colors.brown[300],
               ),
               padding: const EdgeInsets.symmetric(
@@ -424,7 +496,10 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   Text(
                     formatTime(_currentMosque.mosque.maghrib),
                     style: const TextStyle(
@@ -433,35 +508,46 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
-                      _currentMosque.mosque.maghrib = await timeController("maghrib",_currentMosque.mosque.maghrib);
+                      _currentMosque.mosque.maghrib = await timeController(
+                          "maghrib", _currentMosque.mosque.maghrib);
 
                       //saving updated time data into local storage
-                      await RememberMosquePrefs.storeMosqueInfo(_currentMosque.mosque);
+                      await RememberMosquePrefs.storeMosqueInfo(
+                          _currentMosque.mosque);
 
-                      setState(() {}); // Trigger a rebuild to reflect the changes
+                      setState(
+                          () {}); // Trigger a rebuild to reflect the changes
                     },
                   )
                 ],
               ),
-            )
-            ),
+            )),
           ],
         ),
 
-        const SizedBox(height: 12,),
+        const SizedBox(
+          height: 12,
+        ),
 //3ed Tow Segments
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-
             //Isha Time Segment
-            Flexible(child: Container(
+            Flexible(
+                child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: Colors.white54, // Adjust the border color
+                  width: 2, // Adjust the border width
+                ),
                 color: Colors.brown[300],
               ),
               padding: const EdgeInsets.symmetric(
@@ -478,7 +564,10 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   Text(
                     formatTime(_currentMosque.mosque.isha),
                     style: const TextStyle(
@@ -487,28 +576,40 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
-                      _currentMosque.mosque.isha = await timeController("isha",_currentMosque.mosque.isha);
+                      _currentMosque.mosque.isha = await timeController(
+                          "isha", _currentMosque.mosque.isha);
 
                       //saving updated time data into local storage
-                      await RememberMosquePrefs.storeMosqueInfo(_currentMosque.mosque);
+                      await RememberMosquePrefs.storeMosqueInfo(
+                          _currentMosque.mosque);
 
-                      setState(() {}); // Trigger a rebuild to reflect the changes
+                      setState(
+                          () {}); // Trigger a rebuild to reflect the changes
                     },
                   )
                 ],
               ),
-            )
+            )),
+            const SizedBox(
+              width: 12,
             ),
-            const SizedBox(width: 12,),
 
             //Jumuah Time Segment
-            Flexible(child: Container(
+            Flexible(
+                child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: Colors.white54, // Adjust the border color
+                  width: 2, // Adjust the border width
+                ),
                 color: Colors.brown[300],
               ),
               padding: const EdgeInsets.symmetric(
@@ -525,7 +626,10 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   Text(
                     formatTime(_currentMosque.mosque.jumuah),
                     style: const TextStyle(
@@ -534,35 +638,36 @@ Widget _buildPrayerTimeWidgets(){
                       color: Colors.black,
                     ),
                   ),
-                  const Divider(color: Colors.black,),
+                  const Divider(
+                    thickness: 1.25,
+                    color: Colors.black,
+                  ),
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.black),
                     onPressed: () async {
-                      _currentMosque.mosque.jumuah = await timeController("jumuah",_currentMosque.mosque.jumuah);
+                      _currentMosque.mosque.jumuah = await timeController(
+                          "jumuah", _currentMosque.mosque.jumuah);
 
                       //saving updated time data into local storage
-                      await RememberMosquePrefs.storeMosqueInfo(_currentMosque.mosque);
+                      await RememberMosquePrefs.storeMosqueInfo(
+                          _currentMosque.mosque);
 
-                      setState(() {}); // Trigger a rebuild to reflect the changes
+                      setState(
+                          () {}); // Trigger a rebuild to reflect the changes
                     },
                   )
                 ],
               ),
-            )
-            ),
+            )),
           ],
         ),
 
-        const SizedBox(height: 12,),
+        const SizedBox(
+          height: 12,
+        ),
 
         // Add more widget boxes as needed
       ],
     );
-
-
-
-}
-
-
-
+  }
 }

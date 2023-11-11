@@ -86,9 +86,18 @@ class MyChatUIState extends State<UserAnnouncementScreen> {
           builder: (BuildContext context) {
             final mosqueName = widget.mosque.mosque_name;
             final imageWidget = Uri.tryParse(mosqueImageUrl) != null
-                ? CircleAvatar(
-                    backgroundImage: NetworkImage(mosqueImageUrl),
-                  )
+                ? Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white60, // Adjust the border color
+                  width: 2, // Adjust the border width
+                ),
+              ),
+              child: CircleAvatar(
+                      backgroundImage: NetworkImage(mosqueImageUrl),
+                    ),
+                )
                 : const CircleAvatar();
             return ListTile(
               leading: imageWidget,
