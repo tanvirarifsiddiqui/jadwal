@@ -73,9 +73,9 @@ class _NotificationFragmentScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade900,
+      backgroundColor: Colors.brown.shade900,
       appBar: AppBar(
-        backgroundColor: Colors.brown[900],
+        backgroundColor: const Color(0xff2b0c0d),
         title: const Center(
           child: Text('Notifications',
               style: TextStyle(color: Colors.white70, fontSize: 28)),

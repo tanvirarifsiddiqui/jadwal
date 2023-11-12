@@ -32,7 +32,8 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
   // Function to format TimeOfDay as AM/PM
   String formatTime(TimeOfDay time) {
     final now = DateTime.now();
-    final timeToFormat = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    final timeToFormat =
+        DateTime(now.year, now.month, now.day, time.hour, time.minute);
     final formattedTime = DateFormat.jm().format(timeToFormat);
     return formattedTime;
   }
@@ -47,14 +48,14 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
 
   //fetching admin tokens
   void _fetchAdminTokens() async {
-    final res = await http.post(Uri.parse(API.fetchAdminToken),
-        body: {
-          "mosque_id": widget.mosqueId.toString(),
-        });
+    final res = await http.post(Uri.parse(API.fetchAdminToken), body: {
+      "mosque_id": widget.mosqueId.toString(),
+    });
     if (res.statusCode == 200) {
       print(res.body);
       final Map<String, dynamic> data = json.decode(res.body);
-      List<String> tokens = (data["tokens"] as List).map((token) => token.toString()).toList();
+      List<String> tokens =
+          (data["tokens"] as List).map((token) => token.toString()).toList();
       listOfTokens = tokens;
     } else {
       throw Exception('Failed to fetch tokens');
@@ -66,7 +67,8 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
     // Define the notification data
     var notification = {
       'title': 'A new person has connected to your mosque',
-      'body': '${_currentUser.user.user_name} has been connected with this mosque',
+      'body':
+          '${_currentUser.user.user_name} has been connected with this mosque',
       'image': '${API.userImage}${_currentUser.user.user_image}',
       'notification_count': 23,
     };
@@ -75,7 +77,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
       'notification': notification,
       'data': {
         'type': 'connection',
-        'id' : 'tanvir',
+        'id': 'tanvir',
       }
     };
 
@@ -83,7 +85,8 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
     var fcmUrl = Uri.parse('https://fcm.googleapis.com/fcm/send');
 
     // Define your FCM server key
-    var fcmServerKey = 'AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1';
+    var fcmServerKey =
+        'AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1';
 
     for (var token in listOfTokens) {
       // Send the notification to the current token
@@ -144,17 +147,17 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
         //connection with api to server - Successful
         var resBodyOfMosqueData = jsonDecode(res.body);
 
-        if (resBodyOfMosqueData['success']) //Successfully Connected Or Disconnected
+        if (resBodyOfMosqueData[
+            'success']) //Successfully Connected Or Disconnected
         {
           setState(() {
-          isConnected = true;
+            isConnected = true;
           });
         } else {
           setState(() {
-          isConnected = false;
+            isConnected = false;
           });
         }
-
       } else {
         Fluttertoast.showToast(msg: "Server Not Responding");
       }
@@ -175,7 +178,8 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
         //connection with api to server - Successful
         var resBodyOfMosqueData = jsonDecode(res.body);
 
-        if (resBodyOfMosqueData['success']) //Successfully Connected Or Disconnected
+        if (resBodyOfMosqueData[
+            'success']) //Successfully Connected Or Disconnected
         {
           setState(() {
             isConnected = !isConnected;
@@ -209,7 +213,6 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
           color: Colors.white54, // Adjust the border color
           width: 2, // Adjust the border width
         ),
-
       ),
       color: Colors.brown[300],
       child: Padding(
@@ -246,7 +249,6 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
           color: Colors.white54, // Adjust the border color
           width: 2, // Adjust the border width
         ),
-
       ),
       color: Colors.brown[300],
       child: Padding(
@@ -339,15 +341,24 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
   @override
   Widget build(BuildContext context) {
     return _currentMosque != null
-        ? Material(
-            color: Colors.brown.shade800,
-            child: ListView(
+        ? Scaffold(
+            backgroundColor: Colors.brown.shade800,
+            appBar: AppBar(
+              backgroundColor: const Color(0xff2b0c0d),
+              title: const Center(
+                child: Text(
+                  "Mosque's Profile",
+                  style: TextStyle(color: Colors.white70, fontSize: 32),
+                ),
+              ),
+            ),
+            body: ListView(
               padding: const EdgeInsets.all(24),
               children: [
                 //profile image
                 Center(
                     child: ClipOval(
-                      child: Container(
+                  child: Container(
                       width: 200,
                       height: 200,
                       decoration: BoxDecoration(
@@ -416,9 +427,18 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                 const SizedBox(
                   height: 10,
                 ),
-                const Center(child: Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),)),
-                const Divider(thickness: 1.5,color: Colors.white70,),
-                const SizedBox(height: 10,),
+                const Center(
+                    child: Text(
+                  "Prayer Schedule",
+                  style: TextStyle(fontSize: 28, color: Colors.white70),
+                )),
+                const Divider(
+                  thickness: 1.5,
+                  color: Colors.white70,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 _buildPrayerTimeWidgets(),
 
                 mosqueInfoItemProfile(

@@ -82,7 +82,7 @@ class MyChatUIState extends State<UserAnnouncementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff682404),
+      backgroundColor: const Color(0xFF3E2723),
       appBar: AppBar(
         elevation: 12,
         titleSpacing: 10,
@@ -123,8 +123,11 @@ class MyChatUIState extends State<UserAnnouncementScreen> {
           ? Column(
               children: [
                 if (isLoadingMore)
-                  const Center(
-                    child: CircularProgressIndicator(),
+                  const Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
                 Flexible(
                   flex: 1,

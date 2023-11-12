@@ -74,7 +74,7 @@ class _SearchMosqueScreenState extends State<SearchMosqueScreen> {
         ),
         body: _mosques.isNotEmpty
             ? Container(
-                color: Colors.grey.shade900,
+                color: const Color(0xff2b0c0d),
                 child: _foundedMosques.isNotEmpty
                     ? ListView.builder(
                         itemCount: _foundedMosques.length,

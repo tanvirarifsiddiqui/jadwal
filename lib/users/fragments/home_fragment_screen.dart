@@ -80,7 +80,7 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
     return Scaffold(
         backgroundColor: Colors.grey.shade900,
         appBar: AppBar(
-          backgroundColor: Colors.brown[900],
+          backgroundColor: const Color(0xff2b0c0d),
           title: const Text(
             "Jadwal",
             style: TextStyle(color: Colors.white70, fontSize: 32),
@@ -90,13 +90,13 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
                 onPressed:(){
                   Get.to(()=>SearchMosqueScreen());
                 },
-                icon: const Icon(Icons.search_outlined,)
+                icon: const Icon(Icons.search_outlined,color: Colors.white70)
             ),
             IconButton(
                 onPressed:(){
                   Get.to(()=>const QRScanner());
                 },
-                icon: const Icon(Icons.qr_code_scanner,)
+                icon: const Icon(Icons.qr_code_scanner,color: Colors.white70,)
             ),
           ],
         ),

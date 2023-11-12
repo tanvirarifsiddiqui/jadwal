@@ -53,9 +53,9 @@ class _AnnouncementFragmentScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade900,
+      backgroundColor: Colors.brown.shade900,
       appBar: AppBar(
-        backgroundColor: Colors.brown[900],
+        backgroundColor: const Color(0xff2b0c0d),
         title: const Center(
           child: Text('Announcements',
               style: TextStyle(color: Colors.white70, fontSize: 28)),
@@ -63,7 +63,7 @@ class _AnnouncementFragmentScreenState
       ),
       body: _dataFetched
           ? Container(
-        color: Colors.grey.shade900,
+        color: Colors.brown.shade900,
         child: _connectedMosques.isNotEmpty
             ? ListView.builder(
           itemCount: _connectedMosques.length,
@@ -149,16 +149,18 @@ class _AnnouncementFragmentScreenState
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Text(
+                  (mosque.last_admin_name != '')
+                    ? Text(
                     "${mosque.last_admin_name}: ${mosque.last_announcement_text}",
                     softWrap: true,
                     style: TextStyle(color: Colors.brown[200]),
-                  ),
+                  ):const Text("No Announcements",style: TextStyle(color: Colors.white60)),
                 ],
               ),
             ),
             const SizedBox(width: 10),
-            Column(
+            (mosque.last_admin_name != '')
+                ? Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
@@ -174,7 +176,8 @@ class _AnnouncementFragmentScreenState
                   ),
                 ),
               ],
-            ),
+            )
+            : Container(),
           ],
         ),
       ),

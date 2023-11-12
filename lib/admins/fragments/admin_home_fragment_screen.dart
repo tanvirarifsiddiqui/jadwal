@@ -74,57 +74,65 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
   @override
   Widget build(BuildContext context) {
     return _dataFetched
-        ? Material(
-      color: Colors.brown.shade900,
-      child: ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          // Center(
-          //   child: Image.asset("images/mosque.png", width: 240,),
-          // ),
+        ? Scaffold(
+            backgroundColor: Colors.brown.shade900,
+            appBar: AppBar(
+              backgroundColor: const Color(0xff2b0c0d),
+              title: const Center(
+                child: Text(
+                  "Jadwal",
+                  style: TextStyle(color: Colors.white70, fontSize: 32),
+                ),
+              ),
+            ),
+            body: ListView(
+              padding: const EdgeInsets.all(24),
+              children: [
+                // Center(
+                //   child: Image.asset("images/mosque.png", width: 240,),
+                // ),
 
-          Center(
-              child: ClipOval(
-            child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white60, // Adjust the border color
-                      width: 4, // Adjust the border width
-                    ),
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                          "${API.mosqueImage}${_currentMosque.mosque.mosque_image}")),
+                Center(
+                    child: ClipOval(
+                  child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white60, // Adjust the border color
+                          width: 4, // Adjust the border width
+                        ),
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                                "${API.mosqueImage}${_currentMosque.mosque.mosque_image}")),
+                      )),
                 )),
-          )),
 
-          const SizedBox(
-            height: 20,
-          ),
+                const SizedBox(
+                  height: 20,
+                ),
 
-          //mosque name and connectors
-          mosqueInfoItemProfile(
-              Icons.mosque, _currentMosque.mosque.mosque_name),
-          // const SizedBox(
-          //   height: 10,
-          // ),
+                //mosque name and connectors
+                mosqueInfoItemProfile(
+                    Icons.mosque, _currentMosque.mosque.mosque_name),
+                // const SizedBox(
+                //   height: 10,
+                // ),
 
-          const SizedBox(
-            height: 20,
-          ),
-          _dataFetched
-              ? _buildPrayerTimeWidgets() // Build prayer time widgets if data is fetched
-              : const Center(child: CircularProgressIndicator()), // Show loading indicator while fetching data
-
-        ],
-      ),
-    )
-    : const Center(
-    child:
-    CircularProgressIndicator());
+                const SizedBox(
+                  height: 20,
+                ),
+                _dataFetched
+                    ? _buildPrayerTimeWidgets() // Build prayer time widgets if data is fetched
+                    : const Center(
+                        child:
+                            CircularProgressIndicator()), // Show loading indicator while fetching data
+              ],
+            ),
+          )
+        : const Center(child: CircularProgressIndicator());
   }
 
   //fetching user tokens

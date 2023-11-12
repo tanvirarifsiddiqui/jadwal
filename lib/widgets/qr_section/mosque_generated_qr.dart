@@ -7,9 +7,10 @@ class QRMosqueGenerated extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.brown.shade500,
+      backgroundColor: Colors.brown.shade900,
       appBar: AppBar(
         title: const Text("QR Code for this mosque"),
+          backgroundColor: const Color(0xff2b0c0d)
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -23,7 +24,7 @@ class QRMosqueGenerated extends StatelessWidget {
                 backgroundColor: Colors.white,
               ),
               const SizedBox(height: 40,),
-              const Text("Scan this QR code to find the desired mosque",style: TextStyle(color: Colors.white),)
+              const Text("Scan this QR code to find the desired mosque",style: TextStyle(color: Colors.white70),)
             ],
           ),
         ),

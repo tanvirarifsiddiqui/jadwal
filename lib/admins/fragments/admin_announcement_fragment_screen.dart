@@ -207,7 +207,7 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff682404),
+      backgroundColor: const Color(0xFF3E2723),
       appBar: AppBar(
         elevation: 12,
         titleSpacing: 10,
@@ -266,8 +266,11 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
           ? Column(
               children: [
                 if (isLoadingMore)
-                  const Center(
-                    child: CircularProgressIndicator(),
+                  const Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
                 Flexible(
                     flex: 1,
@@ -286,7 +289,7 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                                 ))),
                 Container(
                   alignment: Alignment.center,
-                  color: Colors.white,
+                  color: Colors.white70,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -294,7 +297,7 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                         padding: EdgeInsets.only(bottom: 12.0, left: 8),
                         child: Icon(
                           Icons.emoji_emotions_outlined,
-                          color: Color(0xffD11C2D),
+                          color: Color(0xFF3E2723),
                         ),
                       ),
                       Expanded(
@@ -320,7 +323,7 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                           angle: 45,
                           child: const Icon(
                             Icons.attachment_outlined,
-                            color: Color(0xffD11C2D),
+                            color: Color(0xFF3E2723),
                           ),
                         ),
                       ),
@@ -348,10 +351,10 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                         child: const Padding(
                           padding: EdgeInsets.only(bottom: 6, right: 8, top: 6),
                           child: CircleAvatar(
-                            backgroundColor: Color(0xffD11C2D),
+                            backgroundColor: Color(0xFF3E2723),
                             child: Icon(
                               Icons.send,
-                              color: Colors.white,
+                              color: Colors.white70,
                             ),
                           ),
                         ),

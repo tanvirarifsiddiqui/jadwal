@@ -42,10 +42,10 @@ class _QRScannerState extends State<QRScanner> {
     child: const Text("Scan Mosque QR Code!"));
 
   Widget buildControlButton() => Container(
-    padding: const EdgeInsets.all(16),
+    padding: const EdgeInsets.all(8),
     decoration: BoxDecoration(
         color: Colors.white24,
-        borderRadius: BorderRadius.circular(8)
+        borderRadius: BorderRadius.circular(15)
     ),
     child: Row(
       mainAxisSize: MainAxisSize.max,
@@ -87,11 +87,12 @@ class _QRScannerState extends State<QRScanner> {
   );
 
   void onQRViewCreated(QRViewController controller){
-    (() => this.controller= controller);
+    setState(() => this.controller= controller);
 
-    controller.scannedDataStream.listen((barcode) {
+    controller.scannedDataStream.listen((barcode)=> setState(() {
       Get.to(()=>UserMosqueProfile(mosqueId: int.parse(barcode.code.toString())));
-    });
+    }));
+
   }
 
 

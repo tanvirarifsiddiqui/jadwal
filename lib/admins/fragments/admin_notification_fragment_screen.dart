@@ -76,9 +76,9 @@ class _NotificationFragmentScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade900,
+      backgroundColor: Colors.brown.shade900,
       appBar: AppBar(
-        backgroundColor: Colors.brown[900],
+        backgroundColor: const Color(0xff2b0c0d),
         title: const Center(
           child: Text('Notifications',
               style: TextStyle(color: Colors.white70, fontSize: 28)),
@@ -144,70 +144,72 @@ class _NotificationFragmentScreenState
     }
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      padding: const EdgeInsets.only(top: 6, bottom: 6),
       child: InkWell(
         onTap: () {
           // todo Get.to(() => UserAnnouncementScreen(mosque: mosque));
         },
-        child: Row(
-          children: [
-            SizedBox(
-              width: 40,
-              height: 40,
-              child: ClipOval(
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white60, // Adjust the border color
-                      width: 2, // Adjust the border width
-                    ),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image:
-                      NetworkImage(API.userImage + notification.userImage),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 20,right: 20, top: 10.0, bottom: 10.0),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: ClipOval(
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white60, // Adjust the border color
+                        width: 2, // Adjust the border width
+                      ),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image:
+                        NetworkImage(API.userImage + notification.userImage),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Text(
+                    //   notification.notificationText,
+                    //   softWrap: true,
+                    //   style: const TextStyle(
+                    //     color: Colors.white,
+                    //     fontWeight: FontWeight.w500,
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 5),
+                    Text(
+                      notification.notificationText,
+                      softWrap: true,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // Text(
-                  //   notification.notificationText,
-                  //   softWrap: true,
-                  //   style: const TextStyle(
-                  //     color: Colors.white,
-                  //     fontWeight: FontWeight.w500,
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 5),
                   Text(
-                    notification.notificationText,
-                    softWrap: true,
+                    timeLabel,
                     style: const TextStyle(color: Colors.white),
                   ),
                 ],
-              ),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  timeLabel,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
