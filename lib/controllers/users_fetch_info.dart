@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:http/http.dart' as http;
+import 'package:jadwal/mosques/model/connectors_model.dart';
 import 'package:jadwal/mosques/model/search_mosque_model.dart';
 import 'package:jadwal/mosques/model/user_announcement_mosque_model.dart';
 import 'package:jadwal/mosques/model/user_home_mosque_model.dart';
@@ -114,7 +115,6 @@ class UsersServerOperation{
         'admin_id': adminId.toString(),
         'page':page.toString(),
       });
-      print(res.body);
       //fetching notification data
       if (res.statusCode == 200) {
         var data = jsonDecode(res.body);
@@ -133,6 +133,31 @@ class UsersServerOperation{
     return notifications;
   }
 
+  static Future<List<ConnectorsModel>> fetchTotalConnectors(int mosqueId, {int page = 1}) async {
+    List<ConnectorsModel> notifications = [];
+    try {
+      var res = await http.post(Uri.parse(API.getTotalConnectors),body: {
+        'mosque_id': mosqueId.toString(),
+        'page':page.toString(),
+      });
+      print(res.body);
+      //fetching notification data
+      if (res.statusCode == 200) {
+        var data = jsonDecode(res.body);
+        if (data['success']) {
+          // Parse the list of notifications
+          List<dynamic> connectorList = data['connectedUsers'];
+          notifications = connectorList.map((notificationData) {
+            return ConnectorsModel.fromJson(notificationData);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+    print(notifications);
+    return notifications;
+  }
 
   //sending reordered data to the server
   static sendMosqueOrder(String mosqueOrder) async {

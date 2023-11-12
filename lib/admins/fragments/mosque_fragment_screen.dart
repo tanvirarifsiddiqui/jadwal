@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:jadwal/admins/authentication/signup_screen_from_admin.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
 import 'package:jadwal/mosques/mosquePreferences/current_mosque.dart';
+import 'package:jadwal/mosques/total_connectors.dart';
 import 'package:jadwal/widgets/qr_section/mosque_generated_QR.dart';
 
 class MosqueFragmentScreen extends StatelessWidget {
@@ -103,7 +104,14 @@ class MosqueFragmentScreen extends StatelessWidget {
           mosqueInfoItemProfile(Icons.mosque, _currentMosque.mosque.mosque_name),
           const SizedBox(height: 20,),
 
-          mosqueInfoItemProfile(Icons.connect_without_contact, "${_currentMosque.mosque.connectors} Connectors"),
+          InkWell(
+            onTap: (){
+              Get.to(TotalConnectors(mosqueId: _currentMosque.mosque.mosque_id,));
+            },
+              child: mosqueInfoItemProfile(
+                  Icons.connect_without_contact,
+                  "${_currentMosque.mosque.connectors} Connectors")
+          ),
           const SizedBox(height: 20,),
 
           mosqueInfoItemProfile(Icons.email, _currentMosque.mosque.mosque_email),
