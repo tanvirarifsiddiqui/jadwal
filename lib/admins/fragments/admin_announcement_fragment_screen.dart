@@ -30,7 +30,8 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
   bool _dataFetched = false;
   int currentPage = 1; // Track the current page of messages
   bool isLoadingMore = false;
-  late String announcementText;//solved the problem of showing the new announcements in a real-time
+  late String
+      announcementText; //solved the problem of showing the new announcements in a real-time
 
   @override
   void initState() {
@@ -44,32 +45,33 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
 
   //mosques list
   // List<AnnouncementModel> _announcements = [];
-  Future<void> _setGlobalMember() async{
-     mosqueImageUrl = "${API.mosqueImage}${currentMosque.mosque.mosque_image}";
+  Future<void> _setGlobalMember() async {
+    mosqueImageUrl = "${API.mosqueImage}${currentMosque.mosque.mosque_image}";
   }
 
   Future<void> _fetchAnnouncements() async {
     //fetch messages for current page
     final announcementsForMosque = announcements;
-      await AnnouncementOperation.fetchAnnouncements(
-              currentAdmin.admin.mosque_id, page: currentPage)
-          .then((announcementList) {
-        setState(() {
-          announcementsForMosque.addAll(announcementList);
-          announcements = announcementsForMosque;
-          _dataFetched = true;
-        });
-      }).catchError((error) {});
+    await AnnouncementOperation.fetchAnnouncements(currentAdmin.admin.mosque_id,
+            page: currentPage)
+        .then((announcementList) {
+      setState(() {
+        announcementsForMosque.addAll(announcementList);
+        announcements = announcementsForMosque;
+        _dataFetched = true;
+      });
+    }).catchError((error) {});
   }
+
   Future<void> _sendAnnouncement() async {
     try {
       final res = await http.post(
         Uri.parse(API.sendAnnouncements),
         body: {
-          'admin_id' : currentAdmin.admin.admin_id.toString(),
-          'mosque_id' : currentMosque.mosque.mosque_id.toString(),
-          'announcement_text' : controller.text,
-          'announcement_date' : DateTime.now().toString(),
+          'admin_id': currentAdmin.admin.admin_id.toString(),
+          'mosque_id': currentMosque.mosque.mosque_id.toString(),
+          'announcement_text': controller.text,
+          'announcement_date': DateTime.now().toString(),
         },
       );
       //fetching mosque data
@@ -87,7 +89,8 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
           );
           // Add the new announcement to the list
           setState(() {
-            announcements.insert(0, newAnnouncement); // Insert at the beginning for reverse order
+            announcements.insert(0,
+                newAnnouncement); // Insert at the beginning for reverse order
             animateList();
           });
         }
@@ -112,7 +115,9 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
       'notification': notification,
       'data': {
         'type': 'announcement',
-        'id' : '${currentMosque.mosque.mosque_id}',
+        'mosqueId': '${currentMosque.mosque.mosque_id}',
+        'mosqueName': currentMosque.mosque.mosque_name,
+        'mosqueImage': currentMosque.mosque.mosque_image,
       }
     };
 
@@ -120,7 +125,8 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
     var fcmUrl = Uri.parse('https://fcm.googleapis.com/fcm/send');
 
     // Define your FCM server key
-    var fcmServerKey = 'AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1';
+    var fcmServerKey =
+        'AAAALPXowd4:APA91bGXQ7jXzw5KXMQ97gRCvslUfvuDGHQiDyCSa1HmlDSyvzw6abYLZFvcZ6n_E0kc3H-cFHL_L9A0i7hSK5BmaSjr7tzl6JQX7j_oUg3M7Ul7oDWnLjDyLVcol3NT-wzCv038oyW1';
 
     for (var token in listOfTokens) {
       // Send the notification to the current token
@@ -158,15 +164,16 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
       }
     });
   }
+
   //fetching user tokens
   void _fetchUserTokens() async {
-    final res = await http.post(Uri.parse(API.fetchUserToken),
-        body: {
-          "mosque_id": currentMosque.mosque.mosque_id.toString(),
-        });
+    final res = await http.post(Uri.parse(API.fetchUserToken), body: {
+      "mosque_id": currentMosque.mosque.mosque_id.toString(),
+    });
     if (res.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(res.body);
-      List<String> tokens = (data["tokens"] as List).map((token) => token.toString()).toList();
+      List<String> tokens =
+          (data["tokens"] as List).map((token) => token.toString()).toList();
       listOfTokens = tokens;
       print(listOfTokens);
     } else {
@@ -218,23 +225,24 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
             final mosqueName = currentMosque.mosque.mosque_name;
             final imageWidget = Uri.tryParse(mosqueImageUrl) != null
                 ? Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white60, // Adjust the border color
-                  width: 2, // Adjust the border width
-                ),
-              ),
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(mosqueImageUrl),
-              ),
-            )
-            : const CircleAvatar();
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white60, // Adjust the border color
+                        width: 2, // Adjust the border width
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(mosqueImageUrl),
+                    ),
+                  )
+                : const CircleAvatar();
             return ListTile(
               leading: imageWidget,
               title: Text(
                 mosqueName,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
               ),
               subtitle: const Text(
                 'online',
@@ -320,13 +328,13 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                         onTap: () {
                           announcementText = controller.text;
                           setState(() {
-                            if(controller.text.isNotEmpty){
-                          _sendAnnouncement();
-                          //sending push notification
-                          if(listOfTokens.isNotEmpty){
-                            sendAnnouncementsToConnectedUsers();
-                          }
-                            controller.clear();
+                            if (controller.text.isNotEmpty) {
+                              _sendAnnouncement();
+                              //sending push notification
+                              if (listOfTokens.isNotEmpty) {
+                                sendAnnouncementsToConnectedUsers();
+                              }
+                              controller.clear();
                             }
                           });
                         },

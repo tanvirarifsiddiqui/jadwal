@@ -106,7 +106,11 @@ class _AnnouncementFragmentScreenState
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: InkWell(
         onTap: () {
-          Get.to(() => UserAnnouncementScreen(mosque: mosque));
+          Get.to(() => UserAnnouncementScreen(
+            mosqueId: mosque.mosque_id,
+            mosqueImage: mosque.mosque_image,
+            mosqueName: mosque.mosque_name,
+          ));
         },
         child: Row(
           children: [

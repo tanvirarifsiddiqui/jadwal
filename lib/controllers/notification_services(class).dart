@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:jadwal/admins/fragments/mosque_fragment_screen.dart';
-import 'package:jadwal/users/fragments/announcement_fragment_screen.dart';
+import 'package:jadwal/users/announcements/user_received_announcements.dart';
 import 'package:jadwal/users/fragments/dashboard_of_fragments.dart';
 
 class NotificationServices{
@@ -38,7 +38,7 @@ class NotificationServices{
 
   //function to initialise flutter local notification plugin to show notifications for android when app is active
   void initLocalNotifications(BuildContext context, RemoteMessage message)async{
-    var androidInitializationSettings = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var androidInitializationSettings = const AndroidInitializationSettings('@drawable/icon');
     var iosInitializationSettings = const DarwinInitializationSettings();
 
     var initializationSetting = InitializationSettings(
@@ -101,7 +101,7 @@ class NotificationServices{
         playSound: true,
         ticker: 'ticker' ,
         sound: channel.sound,
-        color: Colors.blue,
+        color: Colors.brown[700],
       //     sound: RawResourceAndroidNotificationSound('jetsons_doorbell')
        icon: '@drawable/icon',
     );
@@ -163,7 +163,11 @@ class NotificationServices{
     if(message.data['type']== 'schedule'){
       Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardOfFragments()));
     }else if(message.data['type']== 'announcement'){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>AnnouncementFragmentScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>UserAnnouncementScreen(
+          mosqueId: int.parse(message.data['mosqueId']),
+          mosqueImage: message.data['mosqueImage'],
+          mosqueName: message.data['mosqueName'])
+      ));
     }else if(message.data['type']== 'connection'){
       Navigator.push(context, MaterialPageRoute(builder: (context)=>MosqueFragmentScreen()));
     }
