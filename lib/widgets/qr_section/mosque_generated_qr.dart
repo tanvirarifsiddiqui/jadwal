@@ -9,7 +9,7 @@ class QRMosqueGenerated extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.brown.shade900,
       appBar: AppBar(
-        title: const Text("QR Code for this mosque"),
+          title: const Text("QR Code for this mosque", style: TextStyle(color: Color(0xffbcaaa4)),),
           backgroundColor: const Color(0xff2b0c0d)
       ),
       body: Center(
@@ -18,7 +18,7 @@ class QRMosqueGenerated extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              QrImage(
+              QrImageView(
                   data: mosqueId.toString(),
                 size: 200,
                 backgroundColor: Colors.white,

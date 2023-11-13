@@ -81,7 +81,7 @@ class _AdminHomeFragmentScreenState extends State<AdminHomeFragmentScreen> {
               title: const Center(
                 child: Text(
                   "Jadwal",
-                  style: TextStyle(color: Colors.white70, fontSize: 32),
+                  style: TextStyle(color: Color(0xffbcaaa4), fontSize: 28),
                 ),
               ),
             ),

@@ -55,7 +55,7 @@ class MosqueFragmentScreen extends StatelessWidget {
         title: const Center(
           child: Text(
             "My Mosque",
-            style: TextStyle(color: Colors.white70, fontSize: 32),
+            style: TextStyle(color: Color(0xffbcaaa4), fontSize: 28),
           ),
         ),
       ),

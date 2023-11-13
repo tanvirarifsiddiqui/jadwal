@@ -52,7 +52,6 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
       "mosque_id": widget.mosqueId.toString(),
     });
     if (res.statusCode == 200) {
-      print(res.body);
       final Map<String, dynamic> data = json.decode(res.body);
       List<String> tokens =
           (data["tokens"] as List).map((token) => token.toString()).toList();
@@ -347,8 +346,8 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
               backgroundColor: const Color(0xff2b0c0d),
               title: const Center(
                 child: Text(
-                  "Mosque's Profile",
-                  style: TextStyle(color: Colors.white70, fontSize: 32),
+                  "Mosque Profile",
+                  style: TextStyle(color: Colors.white70, fontSize: 28),
                 ),
               ),
             ),
@@ -407,7 +406,7 @@ class _UserMosqueProfileState extends State<UserMosqueProfile> {
                         decoration: BoxDecoration(
                             color: isConnected
                                 ? Colors.brown[900]
-                                : const Color(0xffffff),
+                                : const Color(0x00ffffff),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isConnected

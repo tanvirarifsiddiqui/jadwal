@@ -7,9 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:jadwal/admins/fragments/admin_notification_fragment_screen.dart';
 import 'package:jadwal/admins/fragments/mosque_fragment_screen.dart';
 import 'package:jadwal/users/announcements/user_received_announcements.dart';
 import 'package:jadwal/users/fragments/dashboard_of_fragments.dart';
+import 'package:jadwal/users/fragments/notification_fragment_screen.dart';
 
 class NotificationServices{
   //initialising firebase message plugin
@@ -147,7 +149,6 @@ class NotificationServices{
     // when app is terminated
     RemoteMessage? initialMessage = await FirebaseMessaging.instance
         .getInitialMessage();
-
     if (initialMessage != null) {
       handleMessage(context, initialMessage);
     }
@@ -161,7 +162,7 @@ class NotificationServices{
   //here handling the notification after clicking what will happen!
   void handleMessage(BuildContext context, RemoteMessage message){
     if(message.data['type']== 'schedule'){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardOfFragments()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>NotificationFragmentScreen()));
     }else if(message.data['type']== 'announcement'){
       Navigator.push(context, MaterialPageRoute(builder: (context)=>UserAnnouncementScreen(
           mosqueId: int.parse(message.data['mosqueId']),
@@ -169,7 +170,7 @@ class NotificationServices{
           mosqueName: message.data['mosqueName'])
       ));
     }else if(message.data['type']== 'connection'){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>MosqueFragmentScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminNotificationFragmentScreen()));
     }
   }
 

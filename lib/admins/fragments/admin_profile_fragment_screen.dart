@@ -110,8 +110,8 @@ class AdminProfileFragmentScreen extends StatelessWidget {
         backgroundColor: const Color(0xff2b0c0d),
         title: const Center(
           child: Text(
-            "Admin's Profile",
-            style: TextStyle(color: Colors.white70, fontSize: 32),
+            "Admin Profile",
+            style: TextStyle(color: Color(0xffbcaaa4), fontSize: 28),
           ),
         ),
       ),

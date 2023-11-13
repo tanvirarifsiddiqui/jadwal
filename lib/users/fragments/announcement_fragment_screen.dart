@@ -52,30 +52,37 @@ class _AnnouncementFragmentScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.brown.shade900,
-      appBar: AppBar(
-        backgroundColor: const Color(0xff2b0c0d),
-        title: const Center(
-          child: Text('Announcements',
-              style: TextStyle(color: Colors.white70, fontSize: 28)),
+    return RefreshIndicator(
+      onRefresh: ()async{
+        _connectedMosques.clear();
+        _dataFetched = false;
+        await _fetchUserMosqueInfo();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.brown.shade900,
+        appBar: AppBar(
+          backgroundColor: const Color(0xff2b0c0d),
+          title: const Center(
+            child: Text('Announcements',
+                style: TextStyle(color: Color(0xffbcaaa4), fontSize: 28)),
+          ),
         ),
-      ),
-      body: _dataFetched
-          ? Container(
-        color: Colors.brown.shade900,
-        child: _connectedMosques.isNotEmpty
-            ? ListView.builder(
-          itemCount: _connectedMosques.length,
-          itemBuilder: (context, index) {
-            return mosqueComponent(mosque: _connectedMosques[index]);
-          },
+        body: _dataFetched
+            ? Container(
+          color: Colors.brown.shade900,
+          child: _connectedMosques.isNotEmpty
+              ? ListView.builder(
+            itemCount: _connectedMosques.length,
+            itemBuilder: (context, index) {
+              return mosqueComponent(mosque: _connectedMosques[index]);
+            },
+          )
+              : const Center(
+              child: Text("No mosque found",
+                  style: TextStyle(color: Colors.white))),
         )
-            : const Center(
-            child: Text("No mosque found",
-                style: TextStyle(color: Colors.white))),
-      )
-          : const Center(child: CircularProgressIndicator()),
+            : const Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 

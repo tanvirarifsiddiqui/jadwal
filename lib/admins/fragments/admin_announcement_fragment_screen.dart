@@ -175,7 +175,6 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
       List<String> tokens =
           (data["tokens"] as List).map((token) => token.toString()).toList();
       listOfTokens = tokens;
-      print(listOfTokens);
     } else {
       throw Exception('Failed to fetch tokens');
     }
@@ -297,7 +296,7 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                         padding: EdgeInsets.only(bottom: 12.0, left: 8),
                         child: Icon(
                           Icons.emoji_emotions_outlined,
-                          color: Color(0xFF3E2723),
+                          color: Color(0xff2b0c0d),
                         ),
                       ),
                       Expanded(
@@ -323,7 +322,7 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                           angle: 45,
                           child: const Icon(
                             Icons.attachment_outlined,
-                            color: Color(0xFF3E2723),
+                            color: Color(0xff2b0c0d),
                           ),
                         ),
                       ),
@@ -351,10 +350,10 @@ class MyChatUIState extends State<AdminAnnouncementFragmentScreen> {
                         child: const Padding(
                           padding: EdgeInsets.only(bottom: 6, right: 8, top: 6),
                           child: CircleAvatar(
-                            backgroundColor: Color(0xFF3E2723),
+                            backgroundColor: Color(0xff2b0c0d),
                             child: Icon(
                               Icons.send,
-                              color: Colors.white70,
+                              color: Color(0xffbea69a),
                             ),
                           ),
                         ),

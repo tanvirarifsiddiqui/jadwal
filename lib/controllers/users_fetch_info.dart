@@ -88,7 +88,6 @@ class UsersServerOperation{
         'user_id': userId.toString(),
         'page':page.toString(),
       });
-      print(res.body);
       //fetching notification data
       if (res.statusCode == 200) {
         var data = jsonDecode(res.body);
@@ -103,7 +102,6 @@ class UsersServerOperation{
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
-    print(notifications);
     return notifications;
   }
 
@@ -129,7 +127,6 @@ class UsersServerOperation{
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
-    print(notifications);
     return notifications;
   }
 
@@ -140,7 +137,6 @@ class UsersServerOperation{
         'mosque_id': mosqueId.toString(),
         'page':page.toString(),
       });
-      print(res.body);
       //fetching notification data
       if (res.statusCode == 200) {
         var data = jsonDecode(res.body);
@@ -155,7 +151,6 @@ class UsersServerOperation{
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
-    print(notifications);
     return notifications;
   }
 

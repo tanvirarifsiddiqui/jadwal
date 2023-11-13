@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jadwal/admins/adminPreferences/current_admin.dart';
 import 'package:jadwal/api_connection/api_connection.dart';
-import 'package:jadwal/users/userPreferences/current_user.dart';
 import 'package:jadwal/widgets/notifications/admin_notification_model.dart';
-import 'package:jadwal/widgets/notifications/user_notification_model.dart';
 
 import '../../controllers/users_fetch_info.dart';
 
@@ -28,11 +26,11 @@ class _NotificationFragmentScreenState
   @override
   void initState() {
     super.initState();
-    _fetchUserMosqueInfo();
+    _fetchAdminNotificationInfo();
     _setupScrollListener();
   }
 
-  Future<void> _fetchUserMosqueInfo() async {
+  Future<void> _fetchAdminNotificationInfo() async {
     await _currentAdmin.getAdminInfo();
     await _fetchNotifications();
   }
@@ -75,45 +73,52 @@ class _NotificationFragmentScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.brown.shade900,
-      appBar: AppBar(
-        backgroundColor: const Color(0xff2b0c0d),
-        title: const Center(
-          child: Text('Notifications',
-              style: TextStyle(color: Colors.white70, fontSize: 28)),
-        ),
-      ),
-      body: _dataFetched
-          ? Column(
-        children: [
-          Flexible(
-            flex: 1,
-            fit: FlexFit.tight,
-            child: _adminNotifications.isNotEmpty
-                ? ListView.builder(
-              controller: scrollController,
-              physics: const BouncingScrollPhysics(),
-              itemCount: _adminNotifications.length,
-              itemBuilder: (context, index) {
-                return notificationComponent(
-                    notification: _adminNotifications[index]);
-              },
-            )
-                : const Center(
-                child: Text("No notification found",
-                    style: TextStyle(color: Colors.white))),
+    return RefreshIndicator(
+      onRefresh: ()async{
+        _adminNotifications.clear();
+        currentPage = 1;
+        _dataFetched = false;
+        await _fetchAdminNotificationInfo();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.brown.shade900,
+        appBar: AppBar(
+          backgroundColor: const Color(0xff2b0c0d),
+          title: const Center(
+            child: Text('Notifications',
+                style: TextStyle(color: Color(0xffbcaaa4), fontSize: 28)),
           ),
-          if (isLoadingMore)//todo here i should apply a logic to show no more notification if all notifications are fetched.
-            const Padding(
-              padding: EdgeInsets.all(12.0),
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+        ),
+        body: _dataFetched
+            ? Column(
+          children: [
+            Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: _adminNotifications.isNotEmpty
+                  ? ListView.builder(
+                controller: scrollController,
+                itemCount: _adminNotifications.length,
+                itemBuilder: (context, index) {
+                  return notificationComponent(
+                      notification: _adminNotifications[index]);
+                },
+              )
+                  : const Center(
+                  child: Text("No notification found",
+                      style: TextStyle(color: Colors.white))),
             ),
-        ],
-      )
-          : const Center(child: CircularProgressIndicator()),
+            if (isLoadingMore)//todo here i should apply a logic to show no more notification if all notifications are fetched.
+              const Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+          ],
+        )
+            : const Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 
@@ -138,7 +143,7 @@ class _NotificationFragmentScreenState
     } else if (timeDifference.inDays < 30) {
       timeLabel = '${(timeDifference.inDays / 7).floor()}w';
     } else if (timeDifference.inDays < 365) {
-      timeLabel = '${(timeDifference.inDays / 30).floor()}m';
+      timeLabel = '${(timeDifference.inDays / 30).floor()}mn';
     } else {
       timeLabel = '${(timeDifference.inDays / 365).floor()}y';
     }
@@ -150,7 +155,7 @@ class _NotificationFragmentScreenState
           // todo Get.to(() => UserAnnouncementScreen(mosque: mosque));
         },
         child: Padding(
-          padding: const EdgeInsets.only(left: 20,right: 20, top: 10.0, bottom: 10.0),
+          padding: const EdgeInsets.only(left: 20,right: 20, top: 6.0, bottom: 6.0),
           child: Row(
             children: [
               SizedBox(

@@ -77,190 +77,197 @@ class _HomeFragmentScreenState extends State<HomeFragmentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.grey.shade900,
-        appBar: AppBar(
-          backgroundColor: const Color(0xff2b0c0d),
-          title: const Text(
-            "Jadwal",
-            style: TextStyle(color: Colors.white70, fontSize: 32),
+    return RefreshIndicator(
+      onRefresh: ()async{
+        _mosques.clear();
+        _dataFetched = false;
+       await _fetchUserMosqueInfo();
+      },
+      child: Scaffold(
+          backgroundColor: Colors.grey.shade900,
+          appBar: AppBar(
+            backgroundColor: const Color(0xff2b0c0d),
+            title: const Text(
+              "Jadwal",
+              style: TextStyle(color: Color(0xffbcaaa4), fontSize: 28),
+            ),
+            actions: [
+              IconButton(
+                  onPressed:(){
+                    Get.to(()=>SearchMosqueScreen());
+                  },
+                  icon: const Icon(Icons.search_outlined,color: Color(0xffbcaaa4))
+              ),
+              IconButton(
+                  onPressed:(){
+                    Get.to(()=>const QRScanner());
+                  },
+                  icon: const Icon(Icons.qr_code_scanner,color: Color(0xffbcaaa4),)
+              ),
+            ],
           ),
-          actions: [
-            IconButton(
-                onPressed:(){
-                  Get.to(()=>SearchMosqueScreen());
-                },
-                icon: const Icon(Icons.search_outlined,color: Colors.white70)
-            ),
-            IconButton(
-                onPressed:(){
-                  Get.to(()=>const QRScanner());
-                },
-                icon: const Icon(Icons.qr_code_scanner,color: Colors.white70,)
-            ),
-          ],
-        ),
-        body: _dataFetched
-            ? _mosques.isNotEmpty
-                ? ReorderableListView.builder(
-                    itemCount: _mosques.length,
-                    itemBuilder: (_, index) {
-                      return Card(
-                        key: ValueKey(_mosques[
-                            index]), // Use ValueKey for ReorderableListView
-                        color: Colors.brown[800],
-                        elevation: 4,
-                        child: Column(
-                          children: [
-                            ExpansionTile(
-                              iconColor: Colors.white,
-                              collapsedIconColor: Colors.white,
-                              childrenPadding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 20),
-                              //mosque image name and address
-                              title: Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 5),
-                                padding: const EdgeInsets.only(top: 5, bottom: 5),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ClipOval(
-                                        child: Container(
-                                          width: 75,
-                                          height: 75,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: Colors.white60, // Adjust the border color
-                                                width: 2.5, // Adjust the border width
-                                              ),
-                                              image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: NetworkImage(API.mosqueImage+_mosques[index].mosque_image),
-                                              )
+          body: _dataFetched
+              ? _mosques.isNotEmpty
+                  ? ReorderableListView.builder(
+                      itemCount: _mosques.length,
+                      itemBuilder: (_, index) {
+                        return Card(
+                          key: ValueKey(_mosques[
+                              index]), // Use ValueKey for ReorderableListView
+                          color: Colors.brown[800],
+                          elevation: 4,
+                          child: Column(
+                            children: [
+                              ExpansionTile(
+                                iconColor: Colors.white,
+                                collapsedIconColor: Colors.white,
+                                childrenPadding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                //mosque image name and address
+                                title: Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ClipOval(
+                                          child: Container(
+                                            width: 75,
+                                            height: 75,
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Colors.white60, // Adjust the border color
+                                                  width: 2.5, // Adjust the border width
+                                                ),
+                                                image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: NetworkImage(API.mosqueImage+_mosques[index].mosque_image),
+                                                )
+                                            ),
+                                          )
+                                      ),
+                                      const SizedBox(width:20),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width*0.4,//solved by media query
+                                        child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(_mosques[index].mosque_name,softWrap: true, style: const TextStyle(color: Colors.white,fontSize: 16, fontWeight: FontWeight.w500)),
+                                              const SizedBox(height: 5,),
+                                              Text(_mosques[index].mosque_address, softWrap: true, style: TextStyle(color: Colors.brown[200],fontSize: 16)),
+                                            ]
+                                        ),
+                                      ),
+                                      const Spacer()
+                                    ],
+                                  ),
+                                ),
+                                children: [
+                                  const Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),),
+                                  const Divider(thickness: 1.5, color: Colors.white70,),
+                                  const SizedBox(height: 10,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Flexible(child: prayerTimeItem('Fajr', _mosques[index].fajr)),
+                                      const SizedBox(
+                                        width: 4,
+                                      ),
+                                      Flexible(child: prayerTimeItem('Zuhr', _mosques[index].zuhr)),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: 4,),
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Flexible(child: prayerTimeItem('Asr', _mosques[index].asr)),
+                                      const SizedBox(
+                                        width: 4,
+                                      ),
+                                      Flexible(child: prayerTimeItem('Maghrib', _mosques[index].maghrib)),
+                                    ],
+                                  ),
+
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Flexible(child: prayerTimeItem('Isha', _mosques[index].isha)),
+                                      const SizedBox(
+                                        width: 4,
+                                      ),
+                                      Flexible(child: prayerTimeItem('Jumuah', _mosques[index].jumuah)),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: 20,),
+                                  // This button is used to remove this item
+                                  GestureDetector(
+                                    onTap: () {
+                                      Get.to(() => UserMosqueProfile(
+                                          mosqueId: _mosques[index].mosque_id));
+                                    },
+                                    child: Container(
+                                      height: 35,
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        color: Colors.brown[900],
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.brown.shade200,
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'View Profile',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.brown[50],
                                           ),
-                                        )
-                                    ),
-                                    const SizedBox(width:20),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width*0.4,//solved by media query
-                                      child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(_mosques[index].mosque_name,softWrap: true, style: const TextStyle(color: Colors.white,fontSize: 16, fontWeight: FontWeight.w500)),
-                                            const SizedBox(height: 5,),
-                                            Text(_mosques[index].mosque_address, softWrap: true, style: TextStyle(color: Colors.brown[200],fontSize: 16)),
-                                          ]
-                                      ),
-                                    ),
-                                    const Spacer()
-                                  ],
-                                ),
-                              ),
-                              children: [
-                                const Text("Prayer Schedule",style: TextStyle(fontSize: 28,color: Colors.white70),),
-                                const Divider(thickness: 1.5, color: Colors.white70,),
-                                const SizedBox(height: 10,),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Flexible(child: prayerTimeItem('Fajr', _mosques[index].fajr)),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Flexible(child: prayerTimeItem('Zuhr', _mosques[index].zuhr)),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 4,),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Flexible(child: prayerTimeItem('Asr', _mosques[index].asr)),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Flexible(child: prayerTimeItem('Maghrib', _mosques[index].maghrib)),
-                                  ],
-                                ),
-
-                                const SizedBox(
-                                  height: 4,
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Flexible(child: prayerTimeItem('Isha', _mosques[index].isha)),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Flexible(child: prayerTimeItem('Jumuah', _mosques[index].jumuah)),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 20,),
-                                // This button is used to remove this item
-                                GestureDetector(
-                                  onTap: () {
-                                    Get.to(() => UserMosqueProfile(
-                                        mosqueId: _mosques[index].mosque_id));
-                                  },
-                                  child: Container(
-                                    height: 35,
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      color: Colors.brown[900],
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.brown.shade200,
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'View Profile',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.brown[50],
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 15),
-                              ],
-                            ),
-                            // todo apply another features here
-                          ],
-                        ),
-                      );
-                    },
-                    onReorder: (oldIndex, newIndex) {
-                      // Handle the reorder logic here
-                      setState(() {
-                        if (oldIndex < newIndex) {
-                          newIndex -=
-                              1; // Adjust the new index after removing the item
-                        }
-                        //reordering mosque list
-                        final draggedMosque = _mosques.removeAt(
-                            oldIndex); //removing mosque from old index
-                        _mosques.insert(newIndex,
-                            draggedMosque); //assigning mosque to new index
-                      });
+                                  const SizedBox(height: 15),
+                                ],
+                              ),
+                              // todo apply another features here
+                            ],
+                          ),
+                        );
+                      },
+                      onReorder: (oldIndex, newIndex) {
+                        // Handle the reorder logic here
+                        setState(() {
+                          if (oldIndex < newIndex) {
+                            newIndex -=
+                                1; // Adjust the new index after removing the item
+                          }
+                          //reordering mosque list
+                          final draggedMosque = _mosques.removeAt(
+                              oldIndex); //removing mosque from old index
+                          _mosques.insert(newIndex,
+                              draggedMosque); //assigning mosque to new index
+                        });
 
-                      /// save this order in database
-                      saveOrder();
-                    },
-                  )
-                : const Center(
-                    child: Text(
-                      "No Connected Mosque Found",
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  )
-            : const Center(child: CircularProgressIndicator()));
+                        /// save this order in database
+                        saveOrder();
+                      },
+                    )
+                  : const Center(
+                      child: Text(
+                        "No Connected Mosque Found",
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    )
+              : const Center(child: CircularProgressIndicator())),
+    );
   }
 
   Widget prayerTimeItem(String prayerName, TimeOfDay prayerTime) {

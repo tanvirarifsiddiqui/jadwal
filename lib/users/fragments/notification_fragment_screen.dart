@@ -72,45 +72,52 @@ class _NotificationFragmentScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.brown.shade900,
-      appBar: AppBar(
-        backgroundColor: const Color(0xff2b0c0d),
-        title: const Center(
-          child: Text('Notifications',
-              style: TextStyle(color: Colors.white70, fontSize: 28)),
+    return RefreshIndicator(
+      onRefresh: ()async{
+        _userNotifications.clear();
+        currentPage = 1;
+        _dataFetched = false;
+        await _fetchUserMosqueInfo();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.brown.shade900,
+        appBar: AppBar(
+          backgroundColor: const Color(0xff2b0c0d),
+          title: const Center(
+            child: Text('Notifications',
+                style: TextStyle(color: Color(0xffbcaaa4), fontSize: 28)),
+          ),
         ),
-      ),
-      body: _dataFetched
-          ? Column(
-              children: [
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: _userNotifications.isNotEmpty
-                      ? ListView.builder(
-                          controller: scrollController,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: _userNotifications.length,
-                          itemBuilder: (context, index) {
-                            return notificationComponent(
-                                notification: _userNotifications[index]);
-                          },
-                        )
-                      : const Center(
-                          child: Text("No notification found",
-                              style: TextStyle(color: Colors.white))),
-                ),
-                if (isLoadingMore)//todo here i should apply a logic to show no more notification if all notifications are fetched.
-                  const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+        body: _dataFetched
+            ? Column(
+                children: [
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.tight,
+                    child: _userNotifications.isNotEmpty
+                        ? ListView.builder(
+                            controller: scrollController,
+                            itemCount: _userNotifications.length,
+                            itemBuilder: (context, index) {
+                              return notificationComponent(
+                                  notification: _userNotifications[index]);
+                            },
+                          )
+                        : const Center(
+                            child: Text("No notification found",
+                                style: TextStyle(color: Colors.white))),
                   ),
-              ],
-            )
-          : const Center(child: CircularProgressIndicator()),
+                  if (isLoadingMore)//todo here i should apply a logic to show no more notification if all notifications are fetched.
+                    const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                ],
+              )
+            : const Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 
@@ -125,19 +132,19 @@ class _NotificationFragmentScreenState
 
     String timeLabel;
     if (timeDifference.inSeconds < 60) {
-      timeLabel = '${timeDifference.inSeconds}s';
+      timeLabel = '${timeDifference.inSeconds} s';
     }else if (timeDifference.inMinutes < 60) {
-      timeLabel = '${timeDifference.inMinutes}m';
+      timeLabel = '${timeDifference.inMinutes} m';
     } else if (timeDifference.inHours < 24) {
-      timeLabel = '${timeDifference.inHours}h';
+      timeLabel = '${timeDifference.inHours} h';
     } else if (timeDifference.inDays < 7) {
-      timeLabel = '${timeDifference.inDays}d';
+      timeLabel = '${timeDifference.inDays} d';
     } else if (timeDifference.inDays < 30) {
-      timeLabel = '${(timeDifference.inDays / 7).floor()}w';
+      timeLabel = '${(timeDifference.inDays / 7).floor()} w';
     } else if (timeDifference.inDays < 365) {
-      timeLabel = '${(timeDifference.inDays / 30).floor()}m';
+      timeLabel = '${(timeDifference.inDays / 30).floor()} m';
     } else {
-      timeLabel = '${(timeDifference.inDays / 365).floor()}y';
+      timeLabel = '${(timeDifference.inDays / 365).floor()} y';
     }
 
     return Container(
